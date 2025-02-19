@@ -19,8 +19,13 @@ class QuickVllm:
         self.model_name = model_name
         self.generate_params = vllm.SamplingParams(**generate_kwargs)
         self.model = vllm.LLM(model = model_name,
-                              trust_remote_code = True,
-                              gpu_memory_utilization = 0.97)
+                            #   dtype="bfloat16",
+                              tensor_parallel_size = len(os.environ["CUDA_VISIBLE_DEVICES"].split(",")),
+
+                                trust_remote_code=True,
+                                gpu_memory_utilization=0.97,  
+                                enforce_eager=True
+                              )
 
     def chat(self, conversation):
         outputs = self.model.chat(conversation)
@@ -39,6 +44,7 @@ class VllmPoolExecutor:
         self.tp_size = tp_size
         self.gpus = [",".join(self.gpu_list[i:i+tp_size]) \
                      for i in range(0, len(gpu_list), tp_size)]
+        mp.set_start_method("spawn")
         self.manager = mp.Manager()
 
     def chunks(self, lst, chunk_num):
@@ -52,13 +58,25 @@ class VllmPoolExecutor:
 
     @classmethod
     def worker(cls, visible_gpus, model_name, generate_kwargs, prompts, result_list):
-        os.environ["CUDA_VISIBLE_DEVICES"] = visible_gpus
         qvllm = QuickVllm(model_name, generate_kwargs)
 
+
         for prompt in tqdm(prompts):
-            output = qvllm.chat(prompt['input'])
+            inputs = prompt['input']
+            if isinstance(inputs,tuple) and len(inputs) == 2:
+                inputs, user_inputs =  inputs
+                prompt['output'] = []
+                for p_i in user_inputs:
+                    inputs += p_i
+                    output = qvllm.chat(inputs)
+                    prompt['output'].append(output)
+                    inputs+=[{'role':'assistant','content':output}]
+                # result_list.append(prompt)
+            else:
+                output = qvllm.chat(prompt['input'])
+                # prompt.pop('input')
+                prompt['output'] = output
             prompt.pop('input')
-            prompt['output'] = output
             result_list.append(prompt)
 
 
@@ -66,8 +84,9 @@ class VllmPoolExecutor:
     def submit(self,prompts:List[dict], 
                generate_kwargs :dict = dict(
                    temperature = 0.7, 
-                   max_tokens = 100, 
-                   top_p = 0.95)
+                   max_tokens = 8192*2, 
+                   top_p = 0.9
+                   )
                    ):
 
         result_list = self.manager.list()
@@ -125,6 +144,6 @@ if __name__ == "__main__":
         generate_kwargs = dict(
             temperature = 0.7, 
             max_tokens = 100, 
-            top_p = 0.95,
+            top_p = 0.9,
     ),    
     ))

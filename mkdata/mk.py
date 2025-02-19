@@ -20,13 +20,7 @@ def mkprompt(info: dict):
         'question': Q,
         'answer'  : A,
         'facts'   : tuples,
-        'input': prompts(
-                    contexts(
-                        question(Q) + \
-                        information(str(tuples)) + \
-                        answer(A)
-                    )
-                )
+        'input'   : prompts(tuples)
     }
 
 
@@ -36,16 +30,19 @@ def mkprompt(info: dict):
 
 if __name__ == "__main__":
 
-    save_root = "/mnt/petrelfs/tangzecheng/Bilingual_L-CiteEval-Ultra/data/zh/"
+    # save_root = "/mnt/petrelfs/tangzecheng/Bilingual_L-CiteEval-Ultra/data/zh/"
+    save_root = "../data/zh"
     file_name = "qa.jsonl"
     save_dir = f"{save_root}/{file_name}"
 
     vllmpool = VllmPoolExecutor(
-        model_name = "Qwen/Qwen2.5-32B",
-        tp_size = 8,
+        model_name = "/data/hf_models/Qwen2-57B-A14B-Instruct",
+        # model_name = "/data/hf_models/Meta-Llama-3.1-8B-Instruct",
+        # model_name = "/data/hf_models/Meta-Llama-3.1-70B-Instruct",
+        tp_size = 4,
     )
 
-    datas = load_dataset("/mnt/petrelfs/tangzecheng/NLPCC-MH", split = 'train')    
+    datas = load_dataset("../data/NLPCC-MH", split = 'train')    
 
     samples = [mkprompt(datas[i]) for i in range(20)]
 
