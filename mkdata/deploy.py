@@ -37,11 +37,13 @@ class VllmPoolExecutor:
     def __init__(self,
                  model_name = "meta-llama/Meta-Llama-3-8B-Instruct",
                  gpu_list = [0, 1, 2, 3, 4, 5, 6, 7],
-                 tp_size = 2):
+                 tp_size = 2,
+                 max_workers = 2):
 
         self.model_name = model_name
         self.gpu_list = list(map(str, gpu_list))
         self.tp_size = tp_size
+        self.max_workers = max_workers
         self.gpus = [",".join(self.gpu_list[i:i+tp_size]) \
                      for i in range(0, len(gpu_list), tp_size)]
         mp.set_start_method("spawn")
@@ -113,7 +115,7 @@ class VllmPoolExecutor:
 
 
         return list(result_list)
-
+    
 
 
 
