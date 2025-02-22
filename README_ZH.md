@@ -7,7 +7,7 @@
 * **Track 1：长上下文检索忠实度（LRF）** 。给定一个问题及其对应的长上下文，LCM 必须明确地定位并输出必要的关键信息。此 Track 评估模型从长上下文中准确识别和提取相关内容的能力，及评估其在没有外部帮助的情况下的检索能力。评估将从两个维度进行：细粒度检索（句子级别）和粗粒度检索（段落级别）。
 * **Track 2：长上下文生成忠实度 (LGF)** 。此Track侧重于模型生成输出的忠实度。给定一个可能包含与现实世界知识或模型内部知识相冲突的信息的长上下文，例如最近的新闻或更新的事件，LCM 必须严格遵守提供的上下文来生成输出。该Track评估模型在不依赖内部知识或外部检索模块的情况下生成上下文准确且忠实的响应的能力。允许使用推理缩放技术来增强模型的性能。
 
-<div align=center>  <img src="Task_Introduction.png" width=35%></div>
+<div align=center>  <img src="Task_Introduction.png" width=80%></div>
 
 ## 数据描述和任务介绍
 
@@ -40,22 +40,6 @@ L-CiteEval基准中有5个主要类别：单文件QA，多文件QA，摘要，�
 | qa4.3   | CounterFact   |                 |                   |                    |        |
 | qa4.4   | NIAH          |                 |                   |                    |        |
 | qa4.5   | CountingStar  |                 |                   |                    |        |
-
-
-
-
-
-
-
-在Train、Validation、Test文件夹中，包含三个子文件夹：“imgs”、“label”和“char_label”。
-
-* `imgs`文件夹：存储图像数据集。
-* `label` 文件夹：包含与图像数据集对应的源（`src`）和目标（`tgt`）标签，其中源标签中的伪造字符用符号“X”表示。
-* `char_label` 文件夹：包含每张图片中每个字符的标签，格式为 `[x, y, w, h]`，分别表示字符的左上角坐标、宽度、高度。
-
-对于模型训练，本次共享任务仅允许使用[此链接](https://cloud.tsinghua.edu.cn/d/2dcf9a4315614a02ad77/)提供的数据作为监督数据。使用这些数据时，请遵循原数据发布者设定的规则。同时，对于非监督数据，允许使用网络上任何公开的语料库。基于非监督数据，参赛者可以使用任何数据增强方法构建伪平行数据用于模型训练。
-
-有关此数据集的更多信息，请参阅我们的论文：[Towards Real-World Writing Assistance: A Chinese Character Checking Benchmark with Faked and Misspelled Characters](https://arxiv.org/abs/2311.11268)。如果论文与本页面之间存在差异，以本页面的内容为准。
 
 ## 投稿与评估
 

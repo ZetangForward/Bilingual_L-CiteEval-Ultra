@@ -6,7 +6,8 @@ In the field of long-context models (LCMs), a key characteristic is the "retriev
 
 * **Track 1: Long-context Retrieval Faithfulness (LRF)** . Given a query and its corresponding long context, the LCM must explicitly locate and output the necessary key information. This track evaluates the model's ability to accurately identify and extract relevant content from long contexts, assessing its retrieval capability without external assistance. The evaluation will be conducted from two dimensions: fine-grained retrieval (sentence-level) and coarse-grained retrieval (paragraph-level).
 * **Track 2: Long-context Generation Faithfulness (LGF)** . This track focuses on the faithfulness of the model's generated outputs. Given a long context that may include information conflicting with real-world knowledge or the model's internal knowledge, such as recent news or updated events, the LCM must strictly adhere to the provided context to generate outputs. This track evaluates the model's ability to generate responses that are both contextually accurate and faithful, without relying on internal knowledge or external retrieval modules. The use of inference-scaling techniques is allowed to enhance the model's performance.
-<div align=center>  <img src="Task_Introduction.png" width=35%></div>
+
+<div align=center>  <img src="Task_Introduction.png" width=80%></div>
 
 ## Data Description & Rules
 
