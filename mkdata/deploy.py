@@ -116,6 +116,12 @@ class VllmPoolExecutor:
 
         return list(result_list)
     
+    def submit_api(self, prompts:List[dict], 
+               generate_kwargs :dict = dict(
+                   temperature = 0.7, 
+                   max_tokens = 8192*2, 
+                   top_p = 0.9):
+        ...
 
 
 
