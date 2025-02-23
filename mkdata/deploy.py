@@ -5,6 +5,11 @@ from tqdm import tqdm
 import multiprocessing as mp
 
 
+def read_jsonl(path: str):  
+    with open(path, 'r', encoding='utf-8') as file:  
+        data = [json.loads(line.strip()) for line in file]  
+    return data
+
 def save_jsonl(list_data: list, path: str):
     with open(path, "w") as f:
         for data in list_data:
@@ -21,15 +26,13 @@ class QuickVllm:
         self.model = vllm.LLM(model = model_name,
                             #   dtype="bfloat16",
                               tensor_parallel_size = len(os.environ["CUDA_VISIBLE_DEVICES"].split(",")),
-
                                 trust_remote_code=True,
                                 gpu_memory_utilization=0.97,  
                                 enforce_eager=True
                               )
 
     def chat(self, conversation):
-        outputs = self.model.chat(conversation)
-
+        outputs = self.model.chat(conversation, sampling_params = self.generate_params)
         return outputs[0].outputs[0].text
 
 
@@ -59,9 +62,8 @@ class VllmPoolExecutor:
             p += chunk_width
 
     @classmethod
-    def worker(cls, visible_gpus, model_name, generate_kwargs, prompts, result_list):
+    def worker(cls, model_name, generate_kwargs, prompts, result_list):
         qvllm = QuickVllm(model_name, generate_kwargs)
-
 
         for prompt in tqdm(prompts):
             inputs = prompt['input']
@@ -100,7 +102,6 @@ class VllmPoolExecutor:
             process = mp.Process(
                 target = self.worker,
                 args = (
-                    visible_gpus,
                     self.model_name,
                     generate_kwargs,
                     chunked_prompt,
@@ -112,40 +113,8 @@ class VllmPoolExecutor:
         
         for p in processes:
             p.join()
-
+        for p in processes:
+            p.terminate()
 
         return list(result_list)
     
-
-
-
-# nohup python deploy.py > log 2>&1 &
-if __name__ == "__main__":
-    
-
-    vllmpool = VllmPoolExecutor(model_name = "meta-llama/Meta-Llama-3-8B-Instruct",
-                                gpu_list = [0, 1], 
-                                tp_size = 1)
-    
-    print(vllmpool.submit(
-        prompts = [
-            {   
-                'question': 'Write an essay about the importance of higher education.',
-                'input':[{"role": "system","content": "You are a helpful assistant"},
-                         {"role": "user","content": "Hello"},
-                         {"role": "assistant", "content": "Hello! How can I assist you today?"},
-                         {"role": "user", "content": "Write an essay about the importance of higher education."}],
-            },
-            {   'question': 'What is the apple?',
-                'input':[{"role": "system","content": "You are a helpful assistant"},
-                         {"role": "user","content": "Hello"},
-                         {"role": "assistant", "content": "Hello! How can I assist you today?"},
-                         {"role": "user", "content": "What is the apple?"}],
-                         }
-        ],
-        generate_kwargs = dict(
-            temperature = 0.7, 
-            max_tokens = 100, 
-            top_p = 0.9,
-    ),    
-    ))
