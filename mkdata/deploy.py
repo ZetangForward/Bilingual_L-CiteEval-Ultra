@@ -118,3 +118,42 @@ class VllmPoolExecutor:
 
         return list(result_list)
     
+    def submit_api(self, prompts:List[dict], 
+               generate_kwargs :dict = dict(
+                   temperature = 0.7, 
+                   max_tokens = 8192*2, 
+                   top_p = 0.9):
+        ...
+
+
+
+# nohup python deploy.py > log 2>&1 &
+if __name__ == "__main__":
+    
+
+    vllmpool = VllmPoolExecutor(model_name = "meta-llama/Meta-Llama-3-8B-Instruct",
+                                gpu_list = [0, 1], 
+                                tp_size = 1)
+    
+    print(vllmpool.submit(
+        prompts = [
+            {   
+                'question': 'Write an essay about the importance of higher education.',
+                'input':[{"role": "system","content": "You are a helpful assistant"},
+                         {"role": "user","content": "Hello"},
+                         {"role": "assistant", "content": "Hello! How can I assist you today?"},
+                         {"role": "user", "content": "Write an essay about the importance of higher education."}],
+            },
+            {   'question': 'What is the apple?',
+                'input':[{"role": "system","content": "You are a helpful assistant"},
+                         {"role": "user","content": "Hello"},
+                         {"role": "assistant", "content": "Hello! How can I assist you today?"},
+                         {"role": "user", "content": "What is the apple?"}],
+                         }
+        ],
+        generate_kwargs = dict(
+            temperature = 0.7, 
+            max_tokens = 100, 
+            top_p = 0.9,
+    ),    
+    ))
