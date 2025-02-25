@@ -17,29 +17,42 @@ L-CiteEval 是一个新颖的基准测试集，旨在评估 NLP 模型在处理�
 
 L-CiteEval基准中有5个主要类别：单文件QA，多文件QA，摘要，对话理解和综合任务，涵盖了现实和合成任务。鉴于问题和较长的参考环境，L-Citeeval要求LCMS同时生成陈述及其支持证据（引用）。
 
+### 数据载入
+
+```python
+from datasets import load_dataset
+
+# 载入中文数据集
+zh_dataset = load_dataset('ZetangForward/Bilingual_CiteEval', revision="ZH")
+# 载入英文数据集
+en_dataset = load_dataset('ZetangForward/Bilingual_CiteEval', revision="EN")
+
+```
+
 ### 中文任务：(里面的每个任务都可以计算LRF和LGF）
 
-| ZH-Task | Name             | Supporting Fact | Interference Fact | Irrelevant context                   | Source                                     |
-| ------- | ---------------- | --------------- | ----------------- | ------------------------------------ | ------------------------------------------ |
-| qa1     |                  | 1               | 1-16              | Linly-AI/Chinese-pretraining-dataset | NLPCC-MH                                   |
-| qa2     |                  | 2               | 1-16              | Linly-AI/Chinese-pretraining-dataset | NLPCC-MH                                   |
-| qa3     |                  | 3               | 1-16              | Linly-AI/Chinese-pretraining-dataset | NLPCC-MH                                   |
-| qa4     | counting star-ZH |                 |                   |                                      | https://github.com/nick7nlp/Counting-Stars |
-| qa5     | yes-no questions | 2~3             | 1-16              | Linly-AI/Chinese-pretraining-dataset | NLPCC-MH                                   |
+| ZH-Task | Name             | Supporting Fact | Interference Fact | Irrelevant context                   | Source                                     |  |  |  |   |
+| ------- | ---------------- | --------------- | ----------------- | ------------------------------------ | ------------------------------------------ | - | - | - | - |
+| qa1     |                  | 1               | 1-16              | Linly-AI/Chinese-pretraining-dataset | NLPCC-MH                                   |  |  |  |   |
+| qa2     |                  | 2               | 1-16              | Linly-AI/Chinese-pretraining-dataset | NLPCC-MH                                   |  |  |  |   |
+| qa3     |                  | 3               | 1-16              | Linly-AI/Chinese-pretraining-dataset | NLPCC-MH                                   |  |  |  |   |
+| qa4     | counting star-ZH | 8~16            | -                 |                                      | https://github.com/nick7nlp/Counting-Stars |  |  |  |   |
+| qa5     | yes-no questions | 1               | 1-16              | Linly-AI/Chinese-pretraining-dataset | NLPCC-MH                                   |  |  |  | | |
 
 ### 英文任务：(里面的每个任务都可以计算LRF和LGF）
 
 | EN-Task | Name          | Supporting Fact | Interference Fact | Irrelevant context | Source |
 | ------- | ------------- | --------------- | ----------------- | ------------------ | ------ |
-| qa1     | Babilong QA1  | 1               |                   |                    |        |
-| qa2     | Babilong QA2  | 2               |                   |                    |        |
-| qa3     | Babilong QA3  | 3               |                   |                    |        |
+| qa1     | Babilong QA1  |                 |                   |                    |        |
+| qa2     | Babilong QA2  |                 |                   |                    |        |
+| qa3     | Babilong QA3  |                 |                   |                    |        |
 | qa4     | Real_world T  |                 |                   |                    |        |
 | qa4.1   | Single-Doc QA |                 |                   |                    |        |
 | qa4.2   | Multi-Doc QA  |                 |                   |                    |        |
 | qa4.3   | CounterFact   |                 |                   |                    |        |
 | qa4.4   | NIAH          |                 |                   |                    |        |
 | qa4.5   | CountingStar  |                 |                   |                    |        |
+
 
 ## 投稿与评估
 

@@ -23,6 +23,18 @@ For model training, only the data provided by [this link](https://cloud.tsinghua
 
 For more information related to this dataset, please refer to our paper: [Towards Real-World Writing Assistance: A Chinese Character Checking Benchmark with Faked and Misspelled Characters](https://arxiv.org/abs/2311.11268). If there are any differences between the paper and this page, the content of this page should prevail.
 
+### Data Loading
+
+```python
+from datasets import load_dataset
+
+# load Chinese dataset
+zh_dataset = load_dataset('ZetangForward/Bilingual_CiteEval', revision="ZH")
+# load English dataset
+en_dataset = load_dataset('ZetangForward/Bilingual_CiteEval', revision="EN")
+
+```
+
 ## Submission & Evaluation
 
 ### Submission
