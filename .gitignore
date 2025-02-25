@@ -7,6 +7,9 @@ vllm
 # C extensions
 *.so
 
+src
+draft.ipynb
+
 # Distribution / packaging
 .Python
 build/
