@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=40.8.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lte"
+version = "0.1"
+description = "A framework for evaluating lont language models"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = ["vllm==0.6.4.post1","loguru","peft","rouge","bert_score","jieba","fuzzywuzzy","rouge_score","openpyxl","hydra-core"]
+
+
+[tool.setuptools.packages.find]
+include = ["*"]
+
+
+[project.scripts]
+"lte.run" = "lte.main:main"
+"lte.eval" = "lte.eval:eval"

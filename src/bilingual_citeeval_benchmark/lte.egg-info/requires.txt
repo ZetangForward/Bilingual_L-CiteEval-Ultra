@@ -1,0 +1,10 @@
+vllm==0.6.4.post1
+loguru
+peft
+rouge
+bert_score
+jieba
+fuzzywuzzy
+rouge_score
+openpyxl
+hydra-core

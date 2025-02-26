@@ -1,0 +1,29 @@
+# Bilingual CiteEval Benchmark
+
+**Features:**
+
+- Support for fast and memory-efficient inference with [vLLM](https://github.com/vllm-project/vllm).
+- Support for local models and benchmarks.
+
+## Install
+
+To install the `Bilingual_CiteEval_Benchmark` package from the github repository, remeber download the appropriate verison of flash-attn from   [flash-attn](https://github.com/Dao-AILab/flash-attention/releases) , then run:
+
+```bash
+git clone https://gitlab.com/iiGray/bilingual_citeeval_benchmark.git
+cd bilingual_citeeval_benchmark
+conda create -n citeeval python=3.10 -y
+conda activate citeeval
+pip install torch==2.5.1
+pip install -e .
+
+pip install <path_to_flash_attn_whl_file>
+```
+
+# Basic Usage
+
+It's recommended that modify the configuration in **./config/default.yaml** and run:
+
+```bash
+python scripts/run.py  # or export HF_ENDPOINT=https://hf-mirror.com && python scripts/run_jbb.py
+```
