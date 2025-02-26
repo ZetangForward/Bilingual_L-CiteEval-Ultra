@@ -29,31 +29,33 @@ We provide our bilingual test dataset based on L-CiteEval.
 
 For Chinese dataset, we mainly provide  multi-hop tasks, including **1_hop**, **2_hop** and **3-hop**, each sample of which has interference needles ranging in length from 1 to 16. Based on 1-hop task, we build  **yes_no**  task by adding an answer to the 1_hop question. If the added answer is correct, then the corresponding  answer of the  'yes-no' task is 'yes', otherwise the 'yes-no' task's answer is 'no' . The 'answer-yes' samples and 'answer-no' samples are equally divided in our dataset.
 
-Finally, we add **counting_stars** subset directly from the open source  library [Countint-Stars](https://github.com/nick7nlp/Counting-Stars) , and make sure that its volume is consistent with other subtasks.
+Finally, we add **counting_stars** subset directly from the open source  library [Counting-Stars](https://github.com/nick7nlp/Counting-Stars) , and make sure that its volume is consistent with other subtasks.
 
-<table style="font-size: 12px;">
+<table style="font-size: 14px;">
   <tr>
     <th>ZH - Task</th><th> Task Name </th><th> Samples</th><th>Length</th> <th> Facts Source </th> <th> Irrlevent Context Source</th></tr>
-  <tr><th>qa1</th><th>1_hop</th><th rowspan=5>700</th><th rowspan=5>0k - 128k</th><th rowspan=4>NLPCC-MH</th><th rowspan=4>Linly-AI/Chinese-pretraining-dataset</th></tr>
+  <tr><th>qa1</th><th>1_hop</th><th rowspan=5>700</th><th rowspan=5>0k - 128k</th><th rowspan=4>NLPCC-MH</th><th rowspan=4><a href = https://huggingface.co/datasets/Linly-AI/Chinese-pretraining-dataset>Chinese-Pretraining</a> </th></tr>
 <tr><th>qa2</th><th>2_hop</th></tr>
 <tr><th>qa3</th><th>3_hop</th></tr>
 <tr><th>qa4</th><th>yes_no</th></tr>
-<tr><th>qa5</th><th>counting_stars</th><th>-</th> <th> https://github.com/nick7nlp/Counting-Stars</th></tr> </table>
+<tr><th>qa5</th><th>counting_stars</th><th>-</th> <th> <a href = https://github.com/nick7nlp/Counting-Stars>Counting-Stars<a></th></tr> </table>
 
 ### English
 
 For English dataset, we also offer five subtasks. First, we build the **multihop_qa** subtask based on [HotpotQA](https://arxiv.org/pdf/1809.09600)  and [2WikiMultihopQA](https://arxiv.org/pdf/2011.01060) , and build the **single_qa** subtask based on [NarrativeQA](https://arxiv.org/pdf/1712.07040) and [Natural Questions](https://aclanthology.org/Q19-1026.pdf). And for these two tasks, we add additional samples with difficulty levels for users' choices. Then, based on the likeihood that the models may not answer the question according to the provided context, we designed a small number of **counterfact** samples, to test the faithfulness of the models to the provided context.
 
-Finally, we add **counting_stars** subset directly from the open source  library [Countint-Stars](https://github.com/nick7nlp/Counting-Stars) , and add **NIAH** subtask from the open source xxx (不确定是不是直接用的开源库)
+Finally, we add **counting_stars** subset directly from the open source  library [Counting-Stars](https://github.com/nick7nlp/Counting-Stars) , and add **NIAH** subtask from the open source [NIAH](https://github.com/gkamradt/LLMTest_NeedleInAHaystack/tree/main) .
 
-<table style="font-size: 12px;">
+<table style="font-size: 14px;">
   <tr>
     <th>EN - Task</th><th> Task Name </th><th> Samples</th><th>Length</th> <th> Facts Source </th> <th> Irrlevent Context Source</th></tr>
-  <tr><th>qa1</th><th>multihop_qa</th><th>720</th><th rowspan=5>0k - 128k<br>(NOTE:<br>不确定)</th><th rowspan=3>xx</th><th rowspan=3>xxx</th></tr>
-<tr><th>qa2</th><th>single_qa</th> <th>640</th></tr>
-<tr><th>qa3</th><th>counterfact</th><th>120</th></tr>
-<tr><th>qa4</th><th>counting_stars</th><th>360</th><th>-</th><th> https://github.com/nick7nlp/Counting-Stars</th></tr>
-<tr><th>qa5</th><th>niah</th><th>120</th><th>xxx</th> <th> xxx</th></tr> </table>
+  <tr><th>qa1</th><th>multihop_qa</th><th>720</th><th rowspan=5>0k - 128k</th><th><a href = https://huggingface.co/datasets/hotpotqa/hotpot_qa>HotpotQA</a> <br><a href = https://huggingface.co/datasets/voidful/2WikiMultihopQA>2WikiMultihopQA</a></th><th rowspan=3> Remaining Datasets <br> that not used as <br> Facts Source</th></tr>
+<tr><th>qa2</th><th>single_qa</th> <th>640</th> <th><a href = https://huggingface.co/datasets/deepmind/narrativeqa> NarrativeQA</a> <br> <a href = https://ai.google.com/research/NaturalQuestions> NaturalQuestions</th></tr>
+<tr><th>qa3</th><th>counterfact</th><th>120</th><th>-</th></tr>
+<tr><th>qa4</th><th>counting_stars</th><th>360</th><th>-</th><th> <a href = https://github.com/nick7nlp/Counting-Stars>Counting-Stars<a></th></tr>
+<tr><th>qa5</th><th>niah</th><th>120</th><th>-</th> <th><a href = https://github.com/gkamradt/LLMTest_NeedleInAHaystack> NIAH</a> </th></tr> </table>
+
+**[NOTE] We pad each en-subset to 720 samples. Please filter out samples with id = -1 when directly using the dataset.**
 
 
 ## Data Loading
@@ -75,7 +77,7 @@ en_dataset = load_dataset('ZetangForward/Bilingual_CiteEval', revision="EN")
 
 ## Evaluation
 
-For evaluation, we provide a quick-start evalutaion framework, which evalute models ability on metrics  precision, recall, f1 and cite numbers.
+For evaluation, we provide a quick-start evalutaion framework, which evalute models ability on metrics:  precision, recall, f1 and cite numbers.
 
 ### Environment Setup
 
@@ -83,10 +85,10 @@ Remeber download the appropriate verison of flash-attn from   [flash-attn](https
 
 ```bash
 
-git clone git@gitlab.com:nlp_sora/lte_lciteeval_only.git   #这个仓库名还要修改
-cd lte_lciteeval_only
-conda create -n lte python=3.10 -y        #环境名也要修改
-conda activate lte
+git clone https://gitlab.com/iiGray/bilingual_citeeval_benchmark.git
+cd bilingual_citeeval_benchmark
+conda create -n citeeval python=3.10 -y
+conda activate citeeval
 pip install torch==2.5.1
 pip install -e .
 
@@ -95,13 +97,88 @@ pip install <path_to_flash_attn_whl_file>
 
 ### Start Evaluation
 
-```bash
-python lte/run.py  #这个bash 命令还未验证，需要修改
+It's recommended that modify the configuration in **./config/default.yaml** and run:
 
-python lte/eval.py --folder_name Llama-3.1-8B-Instruct_02M_04D_14H_53m   --model_name your_model_name
+```bash
+python scripts/run.py  # or export HF_ENDPOINT=https://hf-mirror.com && python scripts/run.py
 
 
 ```
+
+We present the results of several common models:
+
+<table style="font-size: 14px;">
+  <tr>
+    <th>ZH - Task</th>  <th>Metric</th><th>Llama3<br>-8B-Instruct</th> <th>Llama3.1<br>-8B-Instruct</th>
+  <th>Qwen2<br>-7B-Instruct</th><th>Qwen2.5<br>-7B-Instruct</th></tr>
+<tr>
+    <th rowspan = 3>qa1</th>
+<th> f1-answer </th><th><th></th></th><th><th></th></th>
+  </tr>
+<tr> <th> f1-cite </th> <th></th><th></th></th><th><th></th></tr>
+<tr> <th> f1-avg. </th> <th></th><th></th></th><th><th></th></tr>
+<tr>
+    <th rowspan = 3>qa2</th>
+<th> f1-answer </th><th><th></th></th><th><th></th></th>
+  </tr>
+<tr> <th> f1-cite </th> <th></th><th></th></th><th><th></th></tr>
+<tr> <th> f1-avg. </th> <th></th><th></th></th><th><th></th></tr>
+<tr>
+    <th rowspan = 3>qa3</th>
+<th> f1-answer </th><th><th></th></th></th><th><th></th>
+  </tr>
+<tr> <th> f1-cite </th> <th></th><th></th></th><th><th></th></tr>
+<tr> <th> f1-avg. </th> <th></th><th></th></th><th><th></th></tr>
+<tr>
+    <th rowspan = 3>qa4</th>
+<th> f1-answer </th><th><th></th></th></th><th><th></th>
+  </tr>
+<tr> <th> f1-cite </th> <th></th><th></th></th><th><th></th></tr>
+<tr> <th> f1-avg. </th> <th></th><th></th></th><th><th></th></tr>
+<tr>
+    <th rowspan = 3>qa5</th>
+<th> f1-answer </th><th><th></th></th></th><th><th></th>
+  </tr>
+<tr> <th> f1-cite </th> <th></th><th></th></th><th><th></th></tr>
+<tr> <th> f1-avg. </th> <th></th><th></th></th><th><th></th></tr>
+<tr> <th colspan = 2>ZH - Avg.</th><th></th><th></th></th><th><th></th></tr>
+  <tr>
+    <th>EN - Task</th>  <th>Metric</th><th>Llama3<br>-8B-Instruct</th> <th>Llama3.1<br>-8B-Instruct</th>
+  <th>Qwen2<br>-7B-Instruct</th><th>Qwen2.5<br>-7B-Instruct</th></tr>
+<tr>
+    <th rowspan = 3>qa1</th>
+<th> f1-answer </th><th><th></th></th></th><th><th></th>
+  </tr>
+<tr> <th> f1-cite </th> <th></th><th></th></th><th><th></th></tr>
+<tr> <th> f1-avg. </th> <th></th><th></th></th><th><th></th></tr>
+<tr>
+    <th rowspan = 3>qa2</th>
+<th> f1-answer </th><th><th></th></th></th><th><th></th>
+  </tr>
+<tr> <th> f1-cite </th> <th></th><th></th></th><th><th></th></tr>
+<tr> <th> f1-avg. </th> <th></th><th></th></th><th><th></th></tr>
+<tr>
+    <th rowspan = 3>qa3</th>
+<th> f1-answer </th><th><th></th></th></th><th><th></th>
+  </tr>
+<tr> <th> f1-cite </th> <th></th><th></th></th><th><th></th></tr>
+<tr> <th> f1-avg. </th> <th></th><th></th></th><th><th></th></tr>
+<tr>
+    <th rowspan = 3>qa4</th>
+<th> f1-answer </th><th><th></th></th></th><th><th></th>
+  </tr>
+<tr> <th> f1-cite </th> <th></th><th></th></th><th><th></th></tr>
+<tr> <th> f1-avg. </th> <th></th><th></th></th><th><th></th></tr><tr>
+    <th rowspan = 3>qa5</th>
+<th> f1-answer </th><th><th></th></th></th><th><th></th>
+  </tr>
+<tr> <th> f1-cite </th> <th></th><th></th></th><th><th></th></tr>
+<tr> <th> f1-avg. </th> <th></th><th></th></th><th><th></th></tr>
+<tr> <th colspan = 2>EN - Avg.</th><th></th><th></th></th><th><th></th></tr>
+<tr> <th colspan = 2> <b> AVG. <b></th><th></th><th></th></th><th><th></th></tr>
+</table>
+
+
 
 ## Submission
 
