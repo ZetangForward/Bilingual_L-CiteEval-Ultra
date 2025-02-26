@@ -180,7 +180,7 @@ class Evaluator:
         model.deploy()
         failed = 0
         print("LEN:",len(raw_data))
-        for task_name, benchmark_name, request in tqdm(raw_data, desc=f"The {i}th chunk"):
+        for task_name, benchmark_name, request in tqdm(raw_data, desc=f"Rank: {i}"):
 
             prompt = request.prompt_input
             if self.args.template:

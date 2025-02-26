@@ -8,7 +8,7 @@ benchmarks:
   ZH_CiteEval: [1_hop, 2_hop, 3_hop, yes_no, counting_stars]
   EN_CiteEval: [multihop_qa, single_qa, counterfact, niah, counting_stars]
 
-limit: 10000
+limit: 1000
 
 server: transformers # choices=['transformers', 'vllm']
 torch_dtype: torch.bfloat16

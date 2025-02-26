@@ -1,4 +1,3 @@
-README.md
 pyproject.toml
 lte.egg-info/PKG-INFO
 lte.egg-info/SOURCES.txt
@@ -13,6 +12,7 @@ scripts/eval.py
 scripts/pred.py
 scripts/prepare.py
 scripts/run.py
+scripts/run_jbb.py
 utils/__init__.py
 utils/instance.py
 utils/request.py

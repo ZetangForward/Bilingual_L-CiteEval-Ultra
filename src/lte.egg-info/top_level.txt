@@ -1,4 +1,5 @@
 config
+data
 demo_prompt
 models_deploy
 scripts

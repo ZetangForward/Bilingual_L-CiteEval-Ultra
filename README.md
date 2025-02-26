@@ -17,7 +17,9 @@ L-CiteEval is a novelty benchmark, designed to evaluate the information retrieva
 
 To this end, we design a new benchmark construction method in which the dataset for each task undergoes three steps:
 
-(1) **Seed Data & Padding Data Sampling**   (2) **Padding Data Filtering**   (3) **Length Extension**.
+(1) **Seed Data & Padding Data Sampling**   
+
+(2) **Padding Data Filtering**   (3) **Length Extension**.
 
 We use multiple real and synthetic data sources as a basis, and extend the context length through different strategies to simluate complex retrieval and inference scenarios. The generated test samples' lengths range from 0k to 128k,  aiming to effectively measure the model's long-context comprehension ability.
 
@@ -31,31 +33,30 @@ For Chinese dataset, we mainly provide  multi-hop tasks, including **1_hop**, **
 
 Finally, we add **counting_stars** subset directly from the open source  library [Counting-Stars](https://github.com/nick7nlp/Counting-Stars) , and make sure that its volume is consistent with other subtasks.
 
-<table style="font-size: 14px;">
+<table style="font-size: 16px; margin: auto;margin: auto; width: 95%;" >
   <tr>
     <th>ZH - Task</th><th> Task Name </th><th> Samples</th><th>Length</th> <th> Facts Source </th> <th> Irrlevent Context Source</th></tr>
-  <tr><th>qa1</th><th>1_hop</th><th rowspan=5>700</th><th rowspan=5>0k - 128k</th><th rowspan=4>NLPCC-MH</th><th rowspan=4><a href = https://huggingface.co/datasets/Linly-AI/Chinese-pretraining-dataset>Chinese-Pretraining</a> </th></tr>
-<tr><th>qa2</th><th>2_hop</th></tr>
-<tr><th>qa3</th><th>3_hop</th></tr>
-<tr><th>qa4</th><th>yes_no</th></tr>
-<tr><th>qa5</th><th>counting_stars</th><th>-</th> <th> <a href = https://github.com/nick7nlp/Counting-Stars>Counting-Stars<a></th></tr> </table>
+  <tr><th>qa1</th><th>1_hop</th><th>120</th><th rowspan=5> 8k - 64k </th><th rowspan=4>NLPCC-MH</th><th rowspan=4><a href = https://huggingface.co/datasets/Linly-AI/Chinese-pretraining-dataset>Chinese-Pretraining</a> </th></tr>
+<tr><th>qa2</th><th>2_hop</th><th>120</th></tr>
+<tr><th>qa3</th><th>3_hop</th><th>120</th></tr>
+<tr><th>qa4</th><th>yes_no</th><th>120</th></tr>
+<tr><th>qa5</th><th>counting_stars</th><th>120</th><th>-</th> <th> <a href = https://github.com/nick7nlp/Counting-Stars>Counting-Stars<a></th></tr> </table>
 
 ### English
 
-For English dataset, we also offer five subtasks. First, we build the **multihop_qa** subtask based on [HotpotQA](https://arxiv.org/pdf/1809.09600)  and [2WikiMultihopQA](https://arxiv.org/pdf/2011.01060) , and build the **single_qa** subtask based on [NarrativeQA](https://arxiv.org/pdf/1712.07040) and [Natural Questions](https://aclanthology.org/Q19-1026.pdf). And for these two tasks, we add additional samples with difficulty levels for users' choices. Then, based on the likeihood that the models may not answer the question according to the provided context, we designed a small number of **counterfact** samples, to test the faithfulness of the models to the provided context.
+For English dataset, we also offer five subtasks. First, we build the **multihop_qa** subtask based on [HotpotQA](https://arxiv.org/pdf/1809.09600)  and [2WikiMultihopQA](https://arxiv.org/pdf/2011.01060) , and build the **single_qa** subtask based on [NarrativeQA](https://arxiv.org/pdf/1712.07040) and [Natural Questions](https://aclanthology.org/Q19-1026.pdf). And for these two tasks, we add additional samples with difficulty levels for users' choices. Then, based on the likeihood that the models may not answer the question according to the provided context, we designed a number of **counterfact** samples, to test the faithfulness of the models to the provided context.
 
-Finally, we add **counting_stars** subset directly from the open source  library [Counting-Stars](https://github.com/nick7nlp/Counting-Stars) , and add **NIAH** subtask from the open source [NIAH](https://github.com/gkamradt/LLMTest_NeedleInAHaystack/tree/main) .
+Finally, we add **counting_stars** subset directly from the open source  library [Counting-Stars](https://github.com/nick7nlp/Counting-Stars) , and add **niah** subtask from the open source [NIAH](https://github.com/gkamradt/LLMTest_NeedleInAHaystack/tree/main) .
 
-<table style="font-size: 14px;">
+<table style="font-size: 16px; margin: auto;margin: auto; width: 100%;">
   <tr>
     <th>EN - Task</th><th> Task Name </th><th> Samples</th><th>Length</th> <th> Facts Source </th> <th> Irrlevent Context Source</th></tr>
-  <tr><th>qa1</th><th>multihop_qa</th><th>720</th><th rowspan=5>0k - 128k</th><th><a href = https://huggingface.co/datasets/hotpotqa/hotpot_qa>HotpotQA</a> <br><a href = https://huggingface.co/datasets/voidful/2WikiMultihopQA>2WikiMultihopQA</a></th><th rowspan=3> Remaining Datasets <br> that not used as <br> Facts Source</th></tr>
-<tr><th>qa2</th><th>single_qa</th> <th>640</th> <th><a href = https://huggingface.co/datasets/deepmind/narrativeqa> NarrativeQA</a> <br> <a href = https://ai.google.com/research/NaturalQuestions> NaturalQuestions</th></tr>
+  <tr><th>qa1</th><th>multihop_qa</th><th>120</th><th rowspan=5> 8k - 64k</th><th><a href = https://huggingface.co/datasets/hotpotqa/hotpot_qa>HotpotQA</a> <br><a href = https://huggingface.co/datasets/voidful/2WikiMultihopQA>2WikiMultihopQA</a></th><th rowspan=3> Remaining Datasets <br> that not used as <br> Facts Source</th></tr>
+<tr><th>qa2</th><th>single_qa</th> <th>120</th> <th><a href = https://huggingface.co/datasets/deepmind/narrativeqa> NarrativeQA</a> <br> <a href = https://ai.google.com/research/NaturalQuestions> NaturalQuestions</th></tr>
 <tr><th>qa3</th><th>counterfact</th><th>120</th><th>-</th></tr>
-<tr><th>qa4</th><th>counting_stars</th><th>360</th><th>-</th><th> <a href = https://github.com/nick7nlp/Counting-Stars>Counting-Stars<a></th></tr>
+<tr><th>qa4</th><th>counting_stars</th><th>120</th><th>-</th><th> <a href = https://github.com/nick7nlp/Counting-Stars>Counting-Stars<a></th></tr>
 <tr><th>qa5</th><th>niah</th><th>120</th><th>-</th> <th><a href = https://github.com/gkamradt/LLMTest_NeedleInAHaystack> NIAH</a> </th></tr> </table>
 
-**[NOTE] We pad each en-subset to 720 samples. Please filter out samples with id = -1 when directly using the dataset.**
 
 ## Data Loading
 
@@ -66,17 +67,17 @@ Basically, you may use the dataset by run :
 from datasets import load_dataset
 
 # load Chinese dataset
-zh_dataset = load_dataset('ZetangForward/Bilingual_CiteEval', revision="ZH")
+zh_dataset = load_dataset('ZetangForward/Bilingual_CiteEval', revision="zh")
 
 # load English dataset
-en_dataset = load_dataset('ZetangForward/Bilingual_CiteEval', revision="EN")
+en_dataset = load_dataset('ZetangForward/Bilingual_CiteEval', revision="en")
 
 
 ```
 
 ## Evaluation
 
-For evaluation, we provide a quick-start evalutaion framework, which evalute models ability on metrics:  precision, recall, f1 and cite numbers.
+For evaluation, we provide a quick-start evalutaion framework, which evalute models' ability on metrics:  precision, recall, f1 and cite numbers.
 
 ### Environment Setup
 
@@ -84,8 +85,8 @@ Remeber download the appropriate verison of flash-attn from   [flash-attn](https
 
 ```bash
 
-git clone https://gitlab.com/iiGray/bilingual_citeeval_benchmark.git
-cd Bilingual_L-CiteEval-Ultra
+git clone https://gitlab.com/iiGray/bilingual_citeeval_benchmark.git #把这个换成现在这个仓库
+cd Bilingual_L-CiteEval-Ultra/src
 conda create -n citeeval python=3.10 -y
 conda activate citeeval
 pip install torch==2.5.1
@@ -96,7 +97,7 @@ pip install <path_to_flash_attn_whl_file>
 
 ### Start Evaluation
 
-It's recommended that modify the configuration in **./config/default.yaml** and run:
+Following the environment setup, it's recommended that modify the configuration in **./config/default.yaml** and run in the current directory:
 
 ```bash
 python scripts/run.py  # or export HF_ENDPOINT=https://hf-mirror.com && python scripts/run.py
@@ -106,10 +107,10 @@ python scripts/run.py  # or export HF_ENDPOINT=https://hf-mirror.com && python s
 
 We present the results of several common models:
 
-<table style="font-size: 14px;">
+<table style="font-size: 16px; margin: auto;margin: auto; width: 85%;">
   <tr>
-    <th>ZH - Task</th>  <th>Metric</th><th>Llama3<br>-8B-Instruct</th> <th>Llama3.1<br>-8B-Instruct</th>
-  <th>Qwen2<br>-7B-Instruct</th><th>Qwen2.5<br>-7B-Instruct</th></tr>
+    <th>ZH - Task</th>  <th>Metric</th><th>Llama3.1<br>-8B-Instruct</th> <th>Qwen2.5<br>-7B-Instruct</th>
+  <th>Mistral-7B<br>-Instruct-v0.2</th><th> glm-4<br>-9b-chat</th></tr>
 <tr>
     <th rowspan = 3>qa1</th>
 <th> f1-answer </th><th><th></th></th><th><th></th></th>
@@ -142,8 +143,8 @@ We present the results of several common models:
 <tr> <th> f1-avg. </th> <th></th><th></th></th><th><th></th></tr>
 <tr> <th colspan = 2>ZH - Avg.</th><th></th><th></th></th><th><th></th></tr>
   <tr>
-    <th>EN - Task</th>  <th>Metric</th><th>Llama3<br>-8B-Instruct</th> <th>Llama3.1<br>-8B-Instruct</th>
-  <th>Qwen2<br>-7B-Instruct</th><th>Qwen2.5<br>-7B-Instruct</th></tr>
+    <th>EN - Task</th>  <th>Metric</th><th>Llama3.1<br>-8B-Instruct</th> <th>Qwen2.5<br>-7B-Instruct</th>
+  <th>Mistral-7B<br>-Instruct-v0.2</th><th> glm-4<br>-9b-chat</th></tr>
 <tr>
     <th rowspan = 3>qa1</th>
 <th> f1-answer </th><th><th></th></th></th><th><th></th>
@@ -195,8 +196,6 @@ For submission, the following materials should be packaged as one `zip` file and
 
 If your publication employs our dataset, please cite the following article:
 
-**复制**
-
 ```
 
 @article{tang2024citeeval,
@@ -213,4 +212,4 @@ If your publication employs our dataset, please cite the following article:
 
 ```
 
-If you have any questions about this task, please email to xxx
+If you have any questions about this task, please email to **zecheng.tang@foxmail.com**

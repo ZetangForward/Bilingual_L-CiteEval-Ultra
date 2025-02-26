@@ -1,1 +1,5 @@
-src/bilingual_citeeval_benchmark/data/
+src/data
+src/generation
+src/scripts/run_jbb.py
+src/log
+_useless

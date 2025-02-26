@@ -52,6 +52,9 @@ class Transformer():
         if "stop" in params_:
             params_["eos_token_id"]=[self.tokenizer.eos_token_id, self.tokenizer.encode("{}".format(params_["stop"]), add_special_tokens=False)[-1]]
             params_.pop("stop")
+        
+        params_["pad_token_id"] = self.tokenizer.eos_token_id
+
         if "max_tokens" in params_:
             params_["max_new_tokens"]=params_["max_tokens"]
             params_.pop("max_tokens")

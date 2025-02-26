@@ -68,7 +68,11 @@ class DataLoader:
         progress_bar = tqdm(self.benchmarks.items())
         for benchmark_name, task_names in progress_bar:   
             progress_bar.set_description(f"Downloading and transforming {benchmark_name} data")
-            data = load_dataset('ZetangForward/Bilingual_CiteEval',revision=benchmark_name[:2],cache_dir="./data/tmp_Rawdata",trust_remote_code=True,download_mode="reuse_cache_if_exists")
+            data = load_dataset('ZetangForward/Bilingual_CiteEval',
+                                revision=benchmark_name[:2].lower(),
+                                cache_dir="./data/tmp_Rawdata",
+                                trust_remote_code=True,
+                                download_mode="reuse_cache_if_exists")
 
             for task_name in task_names:
                 progress_bar.set_description(f"Downloading and transforming task {task_name}")
