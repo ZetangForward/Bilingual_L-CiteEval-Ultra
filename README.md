@@ -57,7 +57,6 @@ Finally, we add **counting_stars** subset directly from the open source  library
 
 **[NOTE] We pad each en-subset to 720 samples. Please filter out samples with id = -1 when directly using the dataset.**
 
-
 ## Data Loading
 
 Basically, you may use the dataset by run :
@@ -86,7 +85,7 @@ Remeber download the appropriate verison of flash-attn from   [flash-attn](https
 ```bash
 
 git clone https://gitlab.com/iiGray/bilingual_citeeval_benchmark.git
-cd bilingual_citeeval_benchmark
+cd Bilingual_L-CiteEval-Ultra
 conda create -n citeeval python=3.10 -y
 conda activate citeeval
 pip install torch==2.5.1
@@ -177,8 +176,6 @@ We present the results of several common models:
 <tr> <th colspan = 2>EN - Avg.</th><th></th><th></th></th><th><th></th></tr>
 <tr> <th colspan = 2> <b> AVG. <b></th><th></th><th></th></th><th><th></th></tr>
 </table>
-
-
 
 ## Submission
 
