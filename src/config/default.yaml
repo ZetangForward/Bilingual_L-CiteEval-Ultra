@@ -10,7 +10,7 @@ benchmarks:
 
 limit: 120 # samples number in each task
 
-server: vllm # choices ['transformers', 'vllm']
+server: transformers # choices ['transformers', 'vllm']
 torch_dtype: torch.bfloat16
 devices: [0, 1, 2, 3, 4, 5, 6, 7] # your devices
 tp_size: 2 # the number of gpu that each task needs
