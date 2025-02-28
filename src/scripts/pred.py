@@ -172,5 +172,12 @@ class Evaluator:
                 # data["model_input"] = request.prompt_input
                 if "model_input" in data:
                     data.pop("model_input")
+                if "passage" in data:
+                    data.pop("passage")
+                if "context" in data:
+                    data.pop("context")
+                if "retrieval_question" in data:
+                    data.pop("question")
+
                 json.dump(data, f, ensure_ascii=False)
                 f.write('\n')

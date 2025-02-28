@@ -223,15 +223,22 @@ def eval():
             if not os.path.exists(generation_results_path):
                 continue
 
-
+            data_path = f"{os.path.dirname(os.path.dirname(os.path.abspath(__file__)))}/data/{benchmark_name}/{task_name}.jsonl"
+            org_data = {}
+            with open(data_path, "r", encoding="utf-8") as f:
+                for line in f:
+                    sample  = json.loads(line.strip())
+                    org_data[sample['id']] = sample['passage']
+            
             with open(generation_results_path, "r", encoding="utf-8") as f:
                 for line in f:
                     try:
                         eval_dict = json.loads(line.strip())
                     except:
                         continue
+
                     eval_dict["score"] = {}
-                    passage,choices,pred,label = eval_dict["passage"],eval_dict["choices"],eval_dict["pred"],eval_dict["label"]
+                    passage, pred, label = org_data[eval_dict["id"]], eval_dict["pred"], eval_dict["label"]
                     for metric_name,metric in metrics.items():
                         score = metrics[metric_name]["evaluation"](passage,label, pred)
                         if isinstance(score,dict):
