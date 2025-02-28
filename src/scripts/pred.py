@@ -106,6 +106,7 @@ class Evaluator:
                 args=(i, raw_data, devices)
             )
             p.start()
+            time.sleep(5)
             processes.append(p)
         for p in processes:
             p.join()
