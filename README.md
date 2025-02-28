@@ -1,5 +1,5 @@
 # Task 6 - Faithful Bilingual Long-context Retrieval and Generation Challenge
-
+[[中文版](README_ZH.md)] [[English](README.md)]
 ## Task Introduction
 
 In the field of long-context models (LCMs), a key characteristic is the "retrieval-then-generation" paradigm. This involves the model first implicitly identifying key information within the context and then performing generation based on the aggregated context. While significant progress has been made in developing long-context models, i.e., achieving strong performance on open-source long-context benchmarks, there is a need for a more fine-grained and accurate evaluation of their ability to retrieve relevant information and generate faithful outputs. Furthermore, while many open-source LCMs perform well in English-language tasks, their performance in Chinese-language tasks remains unsatisfactory, highlighting a significant gap in the field. To address these challenges, this shared task focuses on assessing two core capabilities of LCMs: retrieval and generation, in bilingual scenarios (Chinese and English). Participants are required to complete the task solely using the LCMs themselves, without relying on external modules like retrieval-augmented generation (RAG). This shared task includes two tracks:
@@ -11,23 +11,12 @@ In the field of long-context models (LCMs), a key characteristic is the "retriev
 
 ## Data Description & Rules
 
-L-CiteEval is a novelty benchmark, designed to evaluate the information retrieval ability and generation quality of NLP models on long-context tasks.
-
-L-CiteEval is a novelty benchmark, designed to evaluate the information retrieval ability and generation quality of NLP models on long-context tasks, where the model needs to identify critical information while ignoring irrelevent interference.
-
-To this end, we design a new benchmark construction method in which the dataset for each task undergoes three steps:
-
-(1) **Seed Data & Padding Data Sampling**
-
-(2) **Padding Data Filtering**
-
-(3) **Length Extension**.
-
-We use multiple real and synthetic data sources as a basis, and extend the context length through different strategies to simluate complex retrieval and inference scenarios. The generated test samples' lengths range from 0k to 128k,  aiming to effectively measure the model's long-context comprehension ability.
+L-CiteEval is a long-context evaluation benchmark, designed to evaluate the information retrieval ability and generation quality of NLP models on long-context tasks, where the model needs to identify critical information while ignoring irrelevent interference.
 
 ## Data Format
 
-We provide our bilingual test dataset based on L-CiteEval.
+We build our bilingual evaluation dataset based on [L-CiteEval](https://arxiv.org/abs/2410.02115). 
+For more construction details, one can directly refer to this paper.
 
 ### Chinese
 
@@ -186,19 +175,24 @@ We present the results of several common models:
 <tr style="font-weight: bold;"> <th colspan = 2> <b> AVG. <b></th><th>22.23</th><th>23.43</th><th>15.33</th><th>26.82</th></tr>
 </table>
 
+## Training Data Recommendation
+
+Training data is unlimited. The following datasets are recommended:
+
+- LongAlpaca[https://huggingface.co/datasets/Yukang/LongAlpaca-12k]
+
+- LongAlign[https://huggingface.co/datasets/THUDM/LongAlign-10k]
+
+- LongMIT[https://huggingface.co/datasets/donmaclean/LongMIT-128K]
+
+- Context Synthesis[https://huggingface.co/datasets/Wenhao97/gpt4o-mini-context-synthesis]
+
+
 ## Submission
 
-For submission, the following materials should be packaged as one `zip` file and sent to [xzs23@mails.tsinghua.edu.cn](mailto:xzs23@mails.tsinghua.edu.cn):
+For submission, the following materials should be packaged as one `zip` file and sent to [zecheng.tang@foxmail.com](zecheng.tang@foxmail.com):
 
-***Submission File** : The output sentences should be written into one text file. **The format of the submission file must be the same as the input file. Specifically, the submission file must contain the same number of lines as the input file, and each line is a correct sentence corresponding to the sentence in the input file.**
-
-***Code** : The code folder should contain all the codes of data augmentation, data processing, model training, and model inference.
-
-***Document** :
-
-***Data Description** : The document needs to contain a brief description of supervised and unsupervised data used in the experiment, as well as the data augmentation methods for unsupervised data.
-
-***Sharing Link of Unsupervised Data** : Unsupervised data used in the experiment should be uploaded to a cloud storage, i.e., net disk, and the sharing link should be included in the document. It is not allowed to use data that violates the rules during model training.
+***Submission File** :  After running our evaluation framework, the output will be saved in **./src/generation** , please pack this folder into .zip format and submit this folder. If you use your own evaluation framework, make sure your submission should include the original output of the model and evaluation results for all tasks.
 
 ## Contact & Citation
 
