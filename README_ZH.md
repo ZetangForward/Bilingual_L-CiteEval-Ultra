@@ -1,5 +1,7 @@
 # Task 6 - 双语长上下文检索与生成的忠实度挑战
+
 [[中文版](README_ZH.md)] [[English](README.md)]
+
 ## 任务介绍
 
 在长上下文模型 (LCM) 领域，一个关键特征是“先检索后生成”范式。模型首先隐式识别上下文中的关键信息，然后基于聚合的上下文进行生成。虽然开发长文本模型已经取得了重大进展，即模型在开源长文本基准上取得了出色的表现，但仍需要更细粒度和准确地评估它们检索相关信息和生成忠实输出的能力。此外，虽然许多开源 LCM 在英语任务中表现良好，但它们在中文任务中的表现仍然不令人满意，凸显了该领域的重大差距。为了应对这些挑战，此共享任务侧重于评估 LCM 在双语场景（中文和英文）中的两个核心功能：检索和生成。参与者需要仅使用 LCM 本身完成任务，而不依赖于检索增强生成 (RAG) 等外部模块。此共享任务包括两个Track：
@@ -104,7 +106,6 @@ python scripts/run.py \
 
 这里我们展示了几个常见模型的结果：
 
-
 <table style="font-size: 16px; margin: auto;margin: auto; width: 85%;">
   <tr>
     <th>ZH - Task</th>  <th>Metric (%)</th><th>Llama3.1<br>-8B-Instruct</th> <th>Qwen2.5<br>-7B-Instruct</th>
@@ -180,13 +181,10 @@ python scripts/run.py \
 
 训练数据不受限制。推荐使用以下数据集：
 
-- LongAlpaca[https://huggingface.co/datasets/Yukang/LongAlpaca-12k]
-
-- LongAlign[https://huggingface.co/datasets/THUDM/LongAlign-10k]
-
-- LongMIT[https://huggingface.co/datasets/donmaclean/LongMIT-128K]
-
-- Context Synthesis[https://huggingface.co/datasets/Wenhao97/gpt4o-mini-context-synthesis]
+- [LongAlpaca](https://huggingface.co/datasets/Yukang/LongAlpaca-12k)
+- [LongAlign](https://huggingface.co/datasets/THUDM/LongAlign-10k)
+- [LongMIT](https://huggingface.co/datasets/donmaclean/LongMIT-128K)
+- [Context Synthesis](https://huggingface.co/datasets/Wenhao97/gpt4o-mini-context-synthesis)
 
 ## 提交
 
