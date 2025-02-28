@@ -169,7 +169,7 @@ class Evaluator:
                 data["choices"] = data["choices"]
                 data["pred"] = result
                 # data["model_input"] = request.prompt_input
-                if "passage" in data:
-                    data.pop("passage")
+                if "model_input" in data:
+                    data.pop("model_input")
                 json.dump(data, f, ensure_ascii=False)
                 f.write('\n')
