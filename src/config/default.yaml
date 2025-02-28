@@ -1,21 +1,21 @@
 defaults:
   - _nolog.yaml
 
-model_path: /nvme1/hf_models/Meta-Llama-3.1-8B-Instruct
-save_tag: Meta-Llama-3.1-8B-Instruct
+model_path: meta-llama/Llama-3.1-8B-Instruct
+save_tag: Llama-3.1-8B-Instruct
 
 benchmarks: 
   ZH_CiteEval: [1_hop, 2_hop, 3_hop, yes_no, counting_stars]
   EN_CiteEval: [multihop_qa, single_qa, counterfact, niah, counting_stars]
 
-limit: 1000
+limit: 120 # samples number in each task
 
-server: transformers # choices=['transformers', 'vllm']
+server: vllm # choices ['transformers', 'vllm']
 torch_dtype: torch.bfloat16
 devices: [0, 1, 2, 3, 4, 5, 6, 7] # your devices
 tp_size: 2 # the number of gpu that each task needs
 do_eval: true  # If --do_eval=False is provided, the process will terminate after the model's generation and before the evaluation.
 adapter_path: null #  the adapter_path parameter specifies the location of an adapter model.
 template: null  #specifies adding a template to the data for the model to generate, for example: ''[INST] Below is a context and an instruction.
-max_model_len: 128000 #The maximum input length supported by vLLM. If not specified, the default setting of the model will be used
+max_model_len: 128000 #The maximum input length.
 random_seed: 42

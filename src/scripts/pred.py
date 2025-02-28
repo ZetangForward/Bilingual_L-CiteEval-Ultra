@@ -30,22 +30,7 @@ llm_param3 = {"max_tokens": 800,"temperature": 0,"top_p": 1,"stop":"\n","do_samp
 llm_params = {"multihop_qa":llm_param2,"single_qa": llm_param2,"counterfact": llm_param2,'niah':llm_param1,  'counting_stars':  llm_param1,"1_hop": llm_param2,"2_hop": llm_param2,"3_hop": llm_param2,"yes_no": llm_param1}
 
 
-def transform(data,task_name,benchmark_name):
-    if benchmark_name=="EN_CiteEval":
-        for prompt in prompt_en:
-            if prompt in task_name:
-                with open("./demo_prompt/EN_CiteEval/{}".format(prompt+"_default.jsonl"), 'r') as f:
-                    demo_prompt = json.load(f)
-                model_input= get_instruction_template(prompt, demo_prompt, data)
-                return model_input
-    else:
-        for prompt in prompt_zh:
-            if prompt in task_name:
 
-                with open("./demo_prompt/ZH_CiteEval/{}".format(prompt+"_default.jsonl"), 'r') as f:
-                    demo_prompt = json.load(f)
-                model_input= get_instruction_template(prompt, demo_prompt, data)
-                return model_input
     
 def make_doc_prompt(doc, doc_id, doc_prompt):
     if type(doc) == str:
@@ -61,61 +46,14 @@ def make_doc_prompt(doc, doc_id, doc_prompt):
 
     return doc_prompt.replace("{P}", text).replace("{ID}", str(doc_id+1))
 
-
-def make_demo(item, prompt, ndoc=None, doc_prompt=None, instruction=None, test=False):
-
-    if "{Q}" in prompt:
-        prompt = prompt.replace("{INST}", instruction).replace("{Q}", item['question'])
-    else:
-        prompt = prompt.replace("{INST}", instruction)
-    if "{D}" in prompt:
-        doc_list = item["docs"]
-        text = "".join([make_doc_prompt(doc, doc_id, doc_prompt) for doc_id, doc in enumerate(doc_list)])
-        prompt = prompt.replace("{D}", text)
-        
-    answer = "\n" + "\n".join(item["answer"]) if isinstance(item["answer"], list) else item["answer"]
-    prompt = prompt.replace("{A}", "").rstrip() + answer
-    return prompt
-
-def make_demo2(data, prompt,ndoc=None, doc_prompt=None, instruction=None, test=False):
-
-    if "{Q}" in prompt:
-        prompt = prompt.replace("{INST}", instruction).replace("{Q}", data["question"])
-    else:
-        prompt = prompt.replace("{INST}", instruction)
-    if "{D}" in prompt:
-        doc_list = data["passage"]
-
-        text = "".join([make_doc_prompt(doc, doc_id, doc_prompt) for doc_id, doc in enumerate(doc_list)])
-
-        prompt = prompt.replace("{D}", text)
-    prompt = prompt.replace("{A}", "").rstrip() 
-    return prompt
-
-def get_instruction_template(task, prompt, sample):
-
-    head_prompt = ""
-    if task in ["dialsim"]:      
-        head_prompt += make_demo(
-            prompt['demos'][0], prompt=prompt["demo_prompt"], doc_prompt=prompt["doc_prompt"], instruction=prompt["instruction"].replace("<<<chatbox>>>", prompt['demo_role'])
-        )
-    else:
-        head_prompt += make_demo(
-            prompt['demos'][0], prompt=prompt["demo_prompt"], doc_prompt=prompt["doc_prompt"], instruction=prompt["instruction"]
-        )
-    head_prompt += prompt["demo_sep"]
-
-    if task in ["dialsim"]:  
-        head_prompt += make_demo2(
-            sample, prompt["demo_prompt"] ,doc_prompt=prompt["doc_prompt"],
-            instruction=prompt["instruction"].replace("<<<chatbox>>>", "Sheldon"), test=True
-        )
-    else:
-        head_prompt += make_demo2(
-            sample, prompt["demo_prompt"],doc_prompt=prompt["doc_prompt"],
-            instruction=prompt["instruction"], test=True
-        )
-    return head_prompt
+def get_instruction_template(prompt, data):
+    doc_list =  prompt['demos'][0]["docs"]
+    passage = "".join([make_doc_prompt(doc, doc_id, doc_prompt=prompt["doc_prompt"]) for doc_id, doc in enumerate(doc_list)])
+    answer = "\n" + "\n".join(prompt['demos'][0]["answer"]) if isinstance(prompt['demos'][0]["answer"], list) else prompt['demos'][0]["answer"]
+    question = prompt['demos'][0]["question"]
+    doc_list = data["passage"]
+    head_prompt= "".join([make_doc_prompt(doc, doc_id, doc_prompt=prompt["doc_prompt"]) for doc_id, doc in enumerate(doc_list)]) +"\n" +data["question"]
+    return [prompt["instruction"],passage,question,answer,head_prompt]
 
 class Evaluator:
     def __init__(self, args, file_name):
@@ -135,9 +73,8 @@ class Evaluator:
                         if index>=self.limit:
                             break
                         raw_input = Instance(json.loads(line.strip()))
-                        prompt_input = transform(raw_input.data, task_name,benchmark_name)
                         self.tasks_list.append([task_name,benchmark_name, Request(
-                            prompt_input=prompt_input,
+                            prompt_input="",
                             params=llm_params[task_name],
                             raw_example=raw_input,
                         )])
@@ -179,17 +116,39 @@ class Evaluator:
         model = get_model(self.args.server)(self.args,devices)
         model.deploy()
         failed = 0
-        print("LEN:",len(raw_data))
-        for task_name, benchmark_name, request in tqdm(raw_data, desc=f"Rank: {i}"):
 
+        for task_name, benchmark_name, request in tqdm(raw_data, desc=f"Rank: {i}"):
             prompt = request.prompt_input
+            if benchmark_name=="EN_CiteEval":
+                for prompt in prompt_en:
+                    if prompt in task_name:
+                        with open("./demo_prompt/EN_CiteEval/{}".format(prompt+"_default.jsonl"), 'r', encoding='utf-8') as f:
+                            demo_prompt = json.load(f)
+                            break
+                        
+            else:
+                for prompt in prompt_zh:
+                    if prompt in task_name:
+                        with open("./demo_prompt/ZH_CiteEval/{}".format(prompt+"_default.jsonl"), 'r', encoding='utf-8') as f:
+                            demo_prompt = json.load(f)
+                            break
+            instruction, passage,question,answer,head_prompt =  get_instruction_template(demo_prompt, request.raw_example.data)
             if self.args.template:
                 prompt = self.args.template.format(user_input=prompt, assistant_response='')
             elif hasattr(model.tokenizer, 'apply_chat_template') and hasattr(model.tokenizer, 'chat_template') and model.tokenizer.chat_template:
-                prompt = model.tokenizer.apply_chat_template(
-                [{"role": "user", "content": prompt}],
-                tokenize=False, add_generation_prompt=True
-            )
+                if "mistral" in self.args.model_path.lower():
+                    prompt= model.tokenizer.apply_chat_template([
+                        {'role':'user','content': f'{passage}\n\n{question} \n\n {instruction}"'},
+                        {'role':'assistant','content': f'{answer}'},
+                        {'role':'user','content':f"{head_prompt} \n\n {instruction}"}],add_generation_prompt=True,tokenize=False)
+                else:
+                    prompt= model.tokenizer.apply_chat_template(
+                        [{'role':'system','content':f'{instruction}'},
+                        {'role':'user','content': f'{passage}\n\n{question}"'},
+                        {'role':'assistant','content': f'{answer}'},
+                        {'role':'user','content':f"{head_prompt} \n\n {instruction}"}],add_generation_prompt=True,tokenize=False)
+            else:
+                prompt = f"{instruction}\n\n{passage}\n\n{question}\n\n{answer}\n\n{prompt}\n Answer: "
             request.prompt_input = prompt
             try:
                 with torch.no_grad(): 

@@ -1,7 +1,8 @@
-## python lte/eval.py --folder_name  both
+## python scripts/eval.py --folder_name  Meta-Llama-3.1-8B-Instruct
 import os, sys, argparse, json
 import numpy as np, pandas as pd
 from tqdm import tqdm
+import nltk.data
 from collections import defaultdict
 from transformers import pipeline
 from loguru import logger
@@ -10,31 +11,37 @@ logger.add(sys.stdout, colorize=True, format="<level>{message}</level>")
 
 sys.path.append(os.path.dirname( os.path.dirname(os.path.abspath(__file__))))
 from l_citeeval_metrics import (
-    L_cite_eavl_cite,
-    L_cite_eavl_niah_cite,
-    L_cite_eavl_counting_stars_cite,
-    L_cite_eavl_counting_stars_cite_zh,
-    L_cite_eavl_cite_zh,
-    L_cite_eavl_Qa_Score
+    L_cite_eval_cite,
+    L_cite_eval_niah_cite,
+    L_cite_eval_counting_stars_cite,
+    L_cite_eval_counting_stars_cite_zh,
+    L_cite_eval_cite_zh,
+    L_cite_eval_Qa_Score,
+    L_cite_eval_Counting_Stars,
+    L_cite_eval_Counting_Stars_zh,
+    L_cite_eval_Niah,
+    L_cite_eval_Qa_Score_zh
 )
 
-metric1 = {"l_cite_eavl_cite":None}
-metric2 = {"l_cite_eavl_counting_stars_cite":None}
-metric3 = {"l_cite_eavl_niah_cite":None}
-metric4 = {"l_cite_eavl_counting_stars_cite_zh":None}
-metric5 = {"l_cite_eavl_cite_zh":None}
-metric6 = {"l_cite_eavl_qa_score":None}
+metric1 = {"l_cite_eval_cite":None,"l_cite_eval_qa_score":None}
+metric2 = {"l_cite_eval_counting_stars_cite":None,"l_cite_eval_counting_stars":None}
+metric3 = {"l_cite_eval_niah_cite":None,"rough_niah":None}
+metric4 = {"l_cite_eval_counting_stars_cite_zh":None,"l_cite_eval_counting_stars_zh":None}
+metric5 = {"l_cite_eval_cite_zh":None,"l_cite_eval_qa_score_zh":None}
 metric_en = {"multihop_qa": metric1,"single_qa":metric1,"counterfact":metric1,'niah': metric3,  'counting_stars':metric2}
-metric_zh = {"1_hop": metric5,"2_hop":metric5,"3_hop":metric5,'yes_no': metric6,  'counting_stars':metric4}
+metric_zh = {"1_hop": metric5,"2_hop":metric5,"3_hop":metric5,'yes_no': metric5, 'counting_stars':metric4}
 
 METRICS_REGISTRY={
-    "l_cite_eavl_counting_stars_cite":L_cite_eavl_counting_stars_cite,
-    "l_cite_eavl_cite":L_cite_eavl_cite,
-    "l_cite_eavl_niah_cite":L_cite_eavl_niah_cite,
-    "l_cite_eavl_counting_stars_cite_zh":L_cite_eavl_counting_stars_cite_zh,
-    "l_cite_eavl_cite_zh":L_cite_eavl_cite_zh,
-    "l_cite_eavl_qa_score":L_cite_eavl_Qa_Score
-
+    "l_cite_eval_counting_stars_cite":L_cite_eval_counting_stars_cite,
+    "l_cite_eval_cite":L_cite_eval_cite,
+    "l_cite_eval_niah_cite":L_cite_eval_niah_cite,
+    "l_cite_eval_counting_stars_cite_zh":L_cite_eval_counting_stars_cite_zh,
+    "l_cite_eval_cite_zh":L_cite_eval_cite_zh,
+    "l_cite_eval_qa_score":L_cite_eval_Qa_Score,
+    "l_cite_eval_counting_stars":L_cite_eval_Counting_Stars,
+    "l_cite_eval_counting_stars_zh":L_cite_eval_Counting_Stars_zh,
+    "rough_niah":L_cite_eval_Niah,
+    "l_cite_eval_qa_score_zh":L_cite_eval_Qa_Score_zh
 }
 
 def get_metric(metric_name):
@@ -70,19 +77,29 @@ def print_dict_in_table_format(data, excel_file_path):
             avg = 0
             i = 0
             for metric, value in metrics.items():
+                if "f1" not in metric and "acc" not in metric and "niah" not in metric:
+                    continue 
                 i+=1
                 avg += value
-                if i ==len(metrics):
-                    avg = avg/i
+                if i ==2:
+                    avg = avg/2
                     avg = round(avg,2)
                     logger.info("|{}|{}|{}|{}|{}|".format(
                         benchmark_name.center(column_widths[0], ' '),
                         task.center(column_widths[1], ' '),
                         metric.center(column_widths[2], ' '),
                         str(value).center(column_widths[3], ' '),
+                        "".center(column_widths[4], ' ')
+                    ))
+                    rows.append([benchmark_name, task, metric, value, ""])
+                    logger.info("|{}|{}|{}|{}|{}|".format(
+                        benchmark_name.center(column_widths[0], ' '),
+                        task.center(column_widths[1], ' '),
+                        "avg".center(column_widths[2], ' '),
+                        str(avg).center(column_widths[3], ' '),
                         str(avg).center(column_widths[4], ' ')
                     ))
-                    rows.append([benchmark_name, task, metric, value, avg])
+                    rows.append([benchmark_name, task, "avg", avg, avg])
                 else:
                     logger.info("|{}|{}|{}|{}|{}|".format(
                         benchmark_name.center(column_widths[0], ' '),
@@ -147,15 +164,16 @@ def print_dict_in_table_format(data, excel_file_path):
 
     # 创建 DataFrame
     df = pd.DataFrame(rows, columns=header)
+
     # 保存到 Excel 文件
     df.to_excel(excel_file_path, index=False)
-def construct_metrics(metrics_configs):
+def construct_metrics(metrics_configs,task_name):
     clock = 0
     for metrics_name,metrics_config in metrics_configs.items():
         if not metrics_config:
             metrics_configs[metrics_name] = dict()
             metrics_config = {"test":10}
-        if metrics_name in ["l_cite_eavl_cite","l_cite_eavl_cite_zh"]:
+        if metrics_name in ["l_cite_eval_cite","l_cite_eval_cite_zh"]:
             if clock==0:
                 print("If you get stuck here, please check whether the tasksource/deberta-base-long-nli model has been installed for evaluation.")
                 clock +=1
@@ -164,7 +182,7 @@ def construct_metrics(metrics_configs):
             pipe = pipeline("text-classification",model="tasksource/deberta-base-long-nli", device="cuda:0")
         else:
             pipe = "0";
-        metrics_configs[metrics_name]["evaluation"] = get_metric(metrics_name)(pipe=pipe,**metrics_config)
+        metrics_configs[metrics_name]["evaluation"] = get_metric(metrics_name)(pipe=pipe,task_name=task_name,**metrics_config)
     return metrics_configs
 
 def eval():
@@ -187,22 +205,25 @@ def eval():
         task_list = os.listdir(f"generation/{benchmark_name}/prediction/{folder_name}")
         progress_bar2 = tqdm(task_list)
         for task_name in progress_bar2:
+
             if task_name.endswith(".json"):
                 task_name = task_name[:-5]
             elif task_name.endswith(".jsonl"):
                 task_name = task_name[:-6]
             progress_bar2.set_description(f"eval task:{task_name}")
             gathered_metrics = defaultdict(list)
+
             if benchmark_name == "EN_CiteEval":
-                metrics = construct_metrics(metric_en[task_name])
+                metrics = construct_metrics(metric_en[task_name],task_name)
             else:
-                metrics = construct_metrics(metric_zh[task_name])
+                metrics = construct_metrics(metric_zh[task_name],task_name)
             save_task_path = os.path.join("generation",benchmark_name,"results",folder_name,task_name+".jsonl")
             generation_results_path = os.path.join("generation",benchmark_name,"prediction",folder_name,task_name+".jsonl")
             os.makedirs(save_task_path, exist_ok=True)
             if not os.path.exists(generation_results_path):
                 continue
-            data = []
+
+
             with open(generation_results_path, "r", encoding="utf-8") as f:
                 for line in f:
                     try:
@@ -220,13 +241,9 @@ def eval():
                         else:
                             eval_dict["score"].update({"metric_name":score})
                             gathered_metrics[metric_name].append(score)
+      
+     
 
-                        data.append(eval_dict)
-            
-  
-            with open(generation_results_path, "w", encoding="utf-8") as f:
-                for eval_dict in data:
-                    f.write(json.dumps(eval_dict, ensure_ascii=False) + '\n')
             final_metrics = {}
             
             for metric in gathered_metrics:

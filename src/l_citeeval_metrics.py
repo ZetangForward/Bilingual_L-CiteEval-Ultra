@@ -2,6 +2,7 @@
 import json
 from collections import Counter
 import re
+import jieba
 import string
 from rouge import Rouge
 from nltk import sent_tokenize
@@ -26,11 +27,32 @@ def qa_f1_score(prediction, ground_truth, **kwargs):
     ground_truth_tokens = normalized_ground_truth.split()
     return f1_score(prediction_tokens, ground_truth_tokens)
 
+stopwords = ["的", "了", "和", "就", "都"]
+def normalize_zh_answer(s):
+    """Lower text and remove punctuation, stopwords and extra whitespace."""
+    def remove_stopwords(text):
+        filtered_words = [word for word in text if word not in stopwords]
+        return ''.join(filtered_words)
+    def white_space_fix(text):
+        return " ".join(text.split())
+    def remove_punc(text):
+        cn_punctuation = "！？｡。＂＃＄％＆＇（）＊＋，－／：；＜＝＞＠［＼］＾＿｀｛｜｝～｟｠｢｣､、〃》「」『』【】〔〕〖〗〘〙〚〛〜〝〞〟〰〾〿–—‘’‛“”„‟…‧﹏."
+        all_punctuation = set(string.punctuation + cn_punctuation)
+        return "".join(ch for ch in text if ch not in all_punctuation)
+    def lower(text):
+        return text.lower()
+    return white_space_fix(remove_stopwords(remove_punc(lower(s))))
 
+def qa_f1_score_zh(prediction, ground_truth, **kwargs):
+    normalized_prediction = normalize_zh_answer(prediction)
+    normalized_ground_truth = normalize_zh_answer(ground_truth)
+    prediction_tokens = jieba.lcut(normalized_prediction)
+    ground_truth_tokens = jieba.lcut(normalized_ground_truth)
+    return f1_score(prediction_tokens, ground_truth_tokens)
 def normalize_answer(s):
     """Lower text and remove punctuation, articles and extra whitespace."""
     def remove_articles(text):
-        return re.sub(r"\b(a|an|the)\b", " ", text)
+        return re.sub(r"\b(a|an|the|)\b", " ", text)
     def white_space_fix(text):
         return " ".join(text.split())
     def remove_punc(text):
@@ -42,28 +64,161 @@ def normalize_answer(s):
     return white_space_fix(remove_articles(remove_punc(lower(s))))
 
 def remove_citations(sent):
-    return re.sub(r"\[\d+", "", re.sub(r" \[\d+", "", sent)).replace(" |", "").replace("]", "")
+    return re.sub(r"\[.+", "", re.sub(r" \[.+", "", sent)).replace(" |", "").replace("]", "")
 
-
+def rouge_score(prediction, ground_truth, **kwargs):
+    rouge = Rouge()
+    try:
+        scores = rouge.get_scores([prediction], [ground_truth], avg=True)
+    except:
+        return 0.0
+    return scores
 def format_document(doc):
     if type(doc) == str:
         return "Passage: %s" % (doc)
     if type(doc) == dict:
         return "Title: %s\nPassage: %s" % (doc['title'], doc['text'])
-
-
-class L_cite_eavl_Qa_Score:
+def format_document_zh(doc):
+    if type(doc) == str:
+        return "文章: %s" % (doc)
+    if type(doc) == dict:
+        return "标题: %s\n文章: %s" % (doc['title'], doc['text'])
+class L_cite_eval_Niah:
     def __init__(self,**kwargs):
         pass
+    def get_score(self,ground_truth, results):
+        model_ans = results.strip()
+        if '\n' in model_ans:
+            ind = model_ans.index('\n')
+            model_ans = model_ans[:ind]
+
+        model_ans = remove_citations(model_ans)
+        if model_ans == "":
+            return 0
+        return rouge_score(model_ans, ground_truth)['rouge-1']['r']
+    def __call__(self, choices, ground_truths, results):
+        if isinstance(ground_truths,int):
+            ground_truths = str(ground_truths)
+        elif isinstance(ground_truths,list):
+            score = 0
+            for ground_truth in ground_truths:
+                score = max(score,self.get_score(ground_truth,results))
+            return score
+        return self.get_score(ground_truths,results)
+    
+class L_cite_eval_Counting_Stars_zh:
+    def __init__(self,**kwargs):
+        pass
+    def __call__(self, passage, ground_truth, results):
+        score = {"f1_cite":0,"recall_cite":0,"precision_cite":0,"acc_generation":0}
+        gold_ind_lst = []
+        gold_ans_lst = []
+        total_correct=0
+        for j in range(len(passage)):
+            if "小企鹅数了" in passage[j]:
+                gold_ind_lst.append(j+1)
+                pattern = r'小企鹅数了(\d+)颗★'
+                match = re.search(pattern, passage[j])
+                gold_ans_lst.append(int(match.group(1)))
+        model_ans = results.strip()
+        try:
+            ind1 = model_ans.index("{")
+            ind2 = model_ans.index('}')
+            model_ans = json.loads(model_ans[ind1:ind2+1])
+        except:
+            try:
+                model_ans = json.loads('{' + model_ans + '}')
+            except:
+                return score 
+        cite_correct= 0
+        if '段落编号' not in model_ans:
+            return score
+        
+        model_ans['段落编号'] = list(set(model_ans['段落编号']))
+        for idx, psg_id in enumerate(model_ans['段落编号']):
+            if psg_id in gold_ind_lst:
+                cite_correct += 1
+        precision = cite_correct / len(model_ans['段落编号'])
+        recall = cite_correct / len(gold_ind_lst)
+        if precision + recall == 0:
+            f1 = 0
+        else:
+            f1 = 2 * precision * recall / (precision + recall)
+        score["f1_cite"] =f1;score["precision_cite"]=precision;score["recall_cite"]=recall
+        model_ans['小企鹅'] = model_ans['小企鹅'][:len(gold_ans_lst)]
+        for idx, ans in enumerate(model_ans['小企鹅']):
+            if ans in gold_ans_lst:
+                total_correct += 1
+        score["acc_generation"]=total_correct/len(gold_ans_lst)
+        return score
+class L_cite_eval_Counting_Stars:
+    def __init__(self,**kwargs):
+        pass
+    def __call__(self, passage, ground_truth, results):
+        score = {"f1_cite":0,"recall_cite":0,"precision_cite":0,"acc_generation":0}
+        gold_ind_lst = []
+        gold_ans_lst = []
+        total_correct=0
+        for j in range(len(passage)):
+            if "The little penguin counted" in passage[j]:
+                gold_ind_lst.append(j+1)
+                pattern = r'The little penguin counted (\d+) ★'
+                match = re.search(pattern, passage[j])
+                gold_ans_lst.append(int(match.group(1)))
+        model_ans = results.strip()
+        try:
+            ind1 = model_ans.index("{")
+            ind2 = model_ans.index('}')
+            model_ans = json.loads(model_ans[ind1:ind2+1])
+        except:
+            try:
+                model_ans = json.loads('{' + model_ans + '}')
+            except:
+                return score 
+        cite_correct= 0
+        if 'passage_id' not in model_ans:
+            return score
+        model_ans['passage_id'] = list(set(model_ans['passage_id']))
+
+        for idx, psg_id in enumerate(model_ans['passage_id']):
+
+            if psg_id in gold_ind_lst:
+                cite_correct += 1
+        if len(model_ans['passage_id']) == 0:
+            return score
+        precision = cite_correct / len(model_ans['passage_id'])
+        recall = cite_correct / len(gold_ind_lst)
+        if precision + recall == 0:
+            f1 = 0
+        else:
+            f1 = 2 * precision * recall / (precision + recall)
+        score["f1_cite"] =f1;score["precision_cite"]=precision;score["recall_cite"]=recall
+        model_ans['little_penguin'] = model_ans['little_penguin'][:len(gold_ans_lst)]
+        for idx, ans in enumerate(model_ans['little_penguin']):
+            if ans in gold_ans_lst:
+                total_correct += 1
+        score["acc_generation"]=total_correct/len(gold_ans_lst)
+        return score
+
+class L_cite_eval_Qa_Score_zh:
+
+    def __init__(self,task_name,**kwargs):
+        self.task_name =task_name
     def get_score(self, ground_truth, results):
-        if '\n' in results:
-            ind = results.index('\n')
-            results = results[:ind]
+        # if '\n' in results:
+        #     ind = results.index('\n')
+        #     results = results[:ind]
         results = remove_citations(results)
-        temp_f1_score, temp_precsion_score, temp_recall_score = qa_f1_score(results, ground_truth)
+        temp_f1_score, temp_precsion_score, temp_recall_score = qa_f1_score_zh(results, ground_truth)
         return [temp_f1_score, temp_precsion_score, temp_recall_score]
     def __call__(self, choices, ground_truths, results):
-        
+
+        if self.task_name=="yes_no":
+            matches = re.findall(r"<([^>]+)>", results)
+            for answer in matches:
+                if answer=="是" or answer=="否":
+                    results = answer
+                    break
         score = {"f1_generation":0,"recall_generation":0,"precision_generation":0}
         if isinstance(ground_truths,int):
             ground_truths = str(ground_truths)
@@ -81,15 +236,45 @@ class L_cite_eavl_Qa_Score:
         return score
     
 
-class L_cite_eavl_cite:
-    def __init__(self,pipe,**kwargs):
-        self.pipe = pipe
+class L_cite_eval_Qa_Score:
 
+    def __init__(self,task_name,**kwargs):
+        self.task_name =task_name
+    def get_score(self, ground_truth, results):
+        # if '\n' in results:
+        #     ind = results.index('\n')
+        #     results = results[:ind]
+        results = remove_citations(results)
+        temp_f1_score, temp_precsion_score, temp_recall_score = qa_f1_score(results, ground_truth)
+        return [temp_f1_score, temp_precsion_score, temp_recall_score]
+    def __call__(self, choices, ground_truths, results):
+
+        score = {"f1_generation":0,"recall_generation":0,"precision_generation":0}
+        if isinstance(ground_truths,int):
+            ground_truths = str(ground_truths)
+        elif isinstance(ground_truths,list):
+            for ground_truth in ground_truths:
+                all_score = self.get_score(ground_truth,results)
+                score["f1_generation"] = max(score["f1_generation"],all_score[0])
+                score["precision_generation"] = max(score["precision_generation"],all_score[2])
+                score["recall_generation"] = max(score["recall_generation"],all_score[1])
+            return score
+        all_score = self.get_score(ground_truths,results)
+        score["f1_generation"] = max(score["f1_generation"],all_score[0])
+        score["precision_generation"] = max(score["precision_generation"],all_score[2])
+        score["recall_generation"] = max(score["recall_generation"],all_score[1])
+        return score
+    
+
+class L_cite_eval_cite:
+    def __init__(self,pipe,task_name,**kwargs):
+        self.pipe = pipe
     def run_nli_autoais(self,passage, claim):
         result = self.pipe([dict(text=passage, text_pair=claim)])[0]['label']
         inference = 1 if result == "entailment" else 0
         return inference
     def __call__(self, passage, ground_truth, results):
+
         score = {"f1_cite":0,"recall_cite":0,"precision_cite":0,"cite_num_cite":0}
         sents = sent_tokenize(results)
         if len(sents) == 0:
@@ -144,7 +329,6 @@ class L_cite_eavl_cite:
             else:
                 entail_prec += joint_entail 
 
-
         citation_recall = entail / len(sents)
         citation_prec = entail_prec / total_citations if total_citations > 0 else 0
         if citation_recall + citation_prec == 0:
@@ -158,16 +342,26 @@ class L_cite_eavl_cite:
         score['cite_num_cite']=total_citations
         return score
 
-class L_cite_eavl_cite_zh:
-    def __init__(self,pipe,**kwargs):
+class L_cite_eval_cite_zh:
+    def __init__(self,pipe,task_name,**kwargs):
         self.pipe = pipe
+        self.task_name = task_name
+
     def run_nli_autoais(self,passage, claim):
+        
         result = self.pipe([dict(text=passage, text_pair=claim)])[0]['label']
         inference = 1 if result == "entailment" else 0
         return inference
     def __call__(self, passage, ground_truth, results):
+        if self.task_name=="yes_no":
+            results = re.sub(r"\<是\>", "", re.sub(r"\<否\>", "", results)).replace(r"\<", "").replace(r"\<", "")
         score = {"f1_cite":0,"recall_cite":0,"precision_cite":0,"cite_num_cite":0}
-        sents = re.split(r'[。！？]', results)
+        sents_temp = re.split('(：|:|,|，|。|！|\!|\.|？|\?)', results)
+        sents = []
+        for i in range(len(sents_temp)//2):
+            sent = sents_temp[2*i] + sents_temp[2*i+1]
+            sents.append(sent)
+
         if len(sents) == 0:
             return score
 
@@ -191,7 +385,7 @@ class L_cite_eavl_cite_zh:
             else:
                 ref = ref[:3]
                 total_citations += len(ref)
-                joint_passage = '\n'.join([format_document(passage[psgs_id]) for psgs_id in ref]) # title+text
+                joint_passage = '\n'.join([format_document_zh(passage[psgs_id]) for psgs_id in ref]) # title+text
 
             # If not directly rejected by citation format error, calculate the recall score
             if joint_entail == -1: 
@@ -203,13 +397,13 @@ class L_cite_eavl_cite_zh:
                 # Precision check: did the model cite any unnecessary documents?
                 for psgs_id in ref:
                     # condition A
-                    passage_ = format_document(passage[psgs_id]) 
+                    passage_ = format_document_zh(passage[psgs_id]) 
                     nli_result = self.run_nli_autoais(passage_, target_sent)
                     # condition B
                     if not nli_result:
                         subset_exclude = copy.deepcopy(ref)
                         subset_exclude.remove(psgs_id)
-                        passage_ = '\n'.join([format_document(passage[pid]) for pid in subset_exclude])
+                        passage_ = '\n'.join([format_document_zh(passage[pid]) for pid in subset_exclude])
                         nli_result = self.run_nli_autoais(passage_, target_sent)
                         if nli_result: # psgs_id is not necessary
                             flag = 0
@@ -233,7 +427,7 @@ class L_cite_eavl_cite_zh:
         score["recall_cite"]=entail / len(sents)
         score['cite_num_cite']=total_citations
         return score
-class L_cite_eavl_niah_cite:
+class L_cite_eval_niah_cite:
     def __init__(self,pipe,**kwargs):
         self.pipe = pipe
     def run_nli_autoais(self,passage, claim):
@@ -265,7 +459,7 @@ class L_cite_eavl_niah_cite:
         score['cite_num_cite']=len(ref)
         return  score
 
-class L_cite_eavl_counting_stars_cite:
+class L_cite_eval_counting_stars_cite:
     def __init__(self,**kwargs):
         pass
     def __call__(self, passage, ground_truth, results):
@@ -299,6 +493,8 @@ class L_cite_eavl_counting_stars_cite:
         for idx, psg_id in enumerate(model_ans['passage_id']):
             if psg_id in gold_ind_lst:
                 cite_correct += 1
+        if len(model_ans['passage_id']) == 0:
+            return score
         precision = cite_correct / len(model_ans['passage_id'])
         recall = cite_correct / len(gold_ind_lst)
         if precision + recall == 0:
@@ -312,7 +508,7 @@ class L_cite_eavl_counting_stars_cite:
         return  score
 
 
-class L_cite_eavl_counting_stars_cite_zh:
+class L_cite_eval_counting_stars_cite_zh:
     def __init__(self,**kwargs):
         pass
     def __call__(self, passage, ground_truth, results):

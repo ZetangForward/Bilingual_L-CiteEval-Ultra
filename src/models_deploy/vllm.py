@@ -3,6 +3,7 @@ import os
 import torch
 from copy import deepcopy
 import sys
+os.environ["VLLM_ALLOW_LONG_MAX_MODEL_LEN"] = "1"
 from loguru import logger
 logger.remove()
 logger.add(sys.stdout,
@@ -13,52 +14,37 @@ from vllm import LLM, SamplingParams,TokensPrompt
 import time
 
 class Vllm():
-    def __init__(self,args, devices):
+    def __init__(self,
+                 args, 
+                 devices,
+                 params_dict = {
+                     "max_tokens": 200,
+                }):
         self.args = args
         self.devices = devices
-        self.params_dict = {
-            "max_tokens": 16,
-            "temperature": 1,
-            "repetition_penalty": 1.0,
-            "n": 1,
-            "best_of": None,
-            "presence_penalty": 0.0,
-            "frequency_penalty": 0.0,
-            "top_p": 1.0,
-            "top_k": -1,
-            "min_p": 0.0,
-            "seed": None,
-            "stop": None,
-            "stop_token_ids": None,
-            "bad_words": None,
-            "ignore_eos": False,
-            "min_tokens": 0,
-            "logprobs": None,
-            "prompt_logprobs": None,
-            "detokenize": True,
-            "skip_special_tokens": True,
-            "spaces_between_special_tokens": True,
-            "logits_processors": None,
-            "include_stop_str_in_output": False,
-            "truncate_prompt_tokens": None,
-            "output_kind": "CUMULATIVE"
-        }
-   
+        self.params_dict = params_dict
     def deploy(self):
         time_start = time.time()
-        self.tokenizer =  AutoTokenizer.from_pretrained(self.args.model_path,mean_resizing=False)
+        self.tokenizer =  AutoTokenizer.from_pretrained(self.args.model_path,
+                                                        trust_remote_code = True,
+                                                        mean_resizing=False)
         # Load the model and tokenizer
-        if self.args.max_model_len:
+        if hasattr(self.args, "max_model_len") and self.args.max_model_len:
             self.model = LLM(
                 model=self.args.model_path,
                 trust_remote_code = True,
-                tensor_parallel_size=len(self.devices.split(",")),
-                max_model_len = self.args.max_model_len)
+                tensor_parallel_size=len(os.environ["CUDA_VISIBLE_DEVICES"].split(",")),
+                gpu_memory_utilization=0.97,
+                enforce_eager=True,
+                max_model_len = self.args.max_model_len
+                )
         else:
             self.model = LLM(
                 model=self.args.model_path,
                 trust_remote_code = True,
-                tensor_parallel_size=len(self.devices.split(",")),)
+                tensor_parallel_size=len(os.environ["CUDA_VISIBLE_DEVICES"].split(",")),
+                gpu_memory_utilization=0.97,
+                enforce_eager=True)
         # Check and add pad token if necessary
         logger.info("Model and tokenizer initialized.",flush=True )
         time_cost = time.time()-time_start
@@ -71,6 +57,7 @@ class Vllm():
         for i in del_list:
             if i in params_dict:
                 params_dict.pop(i)
+
         outputs = self.model.generate(prompt,SamplingParams(**params_dict))
 
 

@@ -17,9 +17,11 @@ L-CiteEval is a novelty benchmark, designed to evaluate the information retrieva
 
 To this end, we design a new benchmark construction method in which the dataset for each task undergoes three steps:
 
-(1) **Seed Data & Padding Data Sampling**   
+(1) **Seed Data & Padding Data Sampling**
 
-(2) **Padding Data Filtering**   (3) **Length Extension**.
+(2) **Padding Data Filtering**
+
+(3) **Length Extension**.
 
 We use multiple real and synthetic data sources as a basis, and extend the context length through different strategies to simluate complex retrieval and inference scenarios. The generated test samples' lengths range from 0k to 128k,  aiming to effectively measure the model's long-context comprehension ability.
 
@@ -33,10 +35,10 @@ For Chinese dataset, we mainly provide  multi-hop tasks, including **1_hop**, **
 
 Finally, we add **counting_stars** subset directly from the open source  library [Counting-Stars](https://github.com/nick7nlp/Counting-Stars) , and make sure that its volume is consistent with other subtasks.
 
-<table style="font-size: 16px; margin: auto;margin: auto; width: 95%;" >
+<table style="font-size: 16px;" >
   <tr>
     <th>ZH - Task</th><th> Task Name </th><th> Samples</th><th>Length</th> <th> Facts Source </th> <th> Irrlevent Context Source</th></tr>
-  <tr><th>qa1</th><th>1_hop</th><th>120</th><th rowspan=5> 8k - 64k </th><th rowspan=4>NLPCC-MH</th><th rowspan=4><a href = https://huggingface.co/datasets/Linly-AI/Chinese-pretraining-dataset>Chinese-Pretraining</a> </th></tr>
+  <tr><th>qa1</th><th>1_hop</th><th>120</th><th rowspan=5> 8k - 128k </th><th rowspan=4>NLPCC-MH</th><th rowspan=4><a href = https://huggingface.co/datasets/Linly-AI/Chinese-pretraining-dataset>Chinese-Pretraining</a> </th></tr>
 <tr><th>qa2</th><th>2_hop</th><th>120</th></tr>
 <tr><th>qa3</th><th>3_hop</th><th>120</th></tr>
 <tr><th>qa4</th><th>yes_no</th><th>120</th></tr>
@@ -56,7 +58,6 @@ Finally, we add **counting_stars** subset directly from the open source  library
 <tr><th>qa3</th><th>counterfact</th><th>120</th><th>-</th></tr>
 <tr><th>qa4</th><th>counting_stars</th><th>120</th><th>-</th><th> <a href = https://github.com/nick7nlp/Counting-Stars>Counting-Stars<a></th></tr>
 <tr><th>qa5</th><th>niah</th><th>120</th><th>-</th> <th><a href = https://github.com/gkamradt/LLMTest_NeedleInAHaystack> NIAH</a> </th></tr> </table>
-
 
 ## Data Loading
 
@@ -84,7 +85,6 @@ For evaluation, we provide a quick-start evalutaion framework, which evalute mod
 Remeber download the appropriate verison of flash-attn from   [flash-attn](https://github.com/Dao-AILab/flash-attention/releases) , then run:
 
 ```bash
-
 git clone https://gitlab.com/iiGray/bilingual_citeeval_benchmark.git #把这个换成现在这个仓库
 cd Bilingual_L-CiteEval-Ultra/src
 conda create -n citeeval python=3.10 -y
@@ -101,81 +101,89 @@ Following the environment setup, it's recommended that modify the configuration 
 
 ```bash
 python scripts/run.py  # or export HF_ENDPOINT=https://hf-mirror.com && python scripts/run.py
+```
 
+You may also override the default configuration by run:
 
+```bash
+python scripts/run.py \
+model_path=meta-llama/Llama-3.1-8B-Instruct \
+save_tag=Llama-3.1-8B-Instruct \
+devices=[0,1] \
+tp_size=2
 ```
 
 We present the results of several common models:
 
 <table style="font-size: 16px; margin: auto;margin: auto; width: 85%;">
   <tr>
-    <th>ZH - Task</th>  <th>Metric</th><th>Llama3.1<br>-8B-Instruct</th> <th>Qwen2.5<br>-7B-Instruct</th>
-  <th>Mistral-7B<br>-Instruct-v0.2</th><th> glm-4<br>-9b-chat</th></tr>
+    <th>ZH - Task</th>  <th>Metric (%)</th><th>Llama3.1<br>-8B-Instruct</th> <th>Qwen2.5<br>-7B-Instruct</th>
+  <th>Mistral-7B<br>-Instruct-v0.3</th><th> glm-4<br>-9b-chat</th></tr>
 <tr>
     <th rowspan = 3>qa1</th>
-<th> f1-answer </th><th><th></th></th><th><th></th></th>
+<th> f1-cite </th><th>0.19</th><th>2.92</th><th>1.29</th><th>4.33</th>
   </tr>
-<tr> <th> f1-cite </th> <th></th><th></th></th><th><th></th></tr>
-<tr> <th> f1-avg. </th> <th></th><th></th></th><th><th></th></tr>
+<tr> <th> f1-answer </th> <th>27.61</th><th>36.46</th><th>16.97</th><th>3.72</th></tr>
+<tr> <th> avg. </th> <th>13.9</th><th>19.69</th><th>9.13</th><th>4.03</th></tr>
 <tr>
     <th rowspan = 3>qa2</th>
-<th> f1-answer </th><th><th></th></th><th><th></th></th>
+<th> f1-cite </th><th>3.85</th><th>1.64</th><th>0.69</th><th>2.61</th>
   </tr>
-<tr> <th> f1-cite </th> <th></th><th></th></th><th><th></th></tr>
-<tr> <th> f1-avg. </th> <th></th><th></th></th><th><th></th></tr>
+<tr> <th> f1-answer </th> <th>10.31</th><th>24.58</th><th>7.66</th><th>2.49</th></tr>
+<tr> <th> avg. </th> <th>7.08</th><th>13.11</th><th>4.18</th><th>2.55</th></tr>
 <tr>
     <th rowspan = 3>qa3</th>
-<th> f1-answer </th><th><th></th></th></th><th><th></th>
+<th> f1-cite </th><th>2.19</th><th>1.10</th><th>0.78</th><th>3.52</th>
   </tr>
-<tr> <th> f1-cite </th> <th></th><th></th></th><th><th></th></tr>
-<tr> <th> f1-avg. </th> <th></th><th></th></th><th><th></th></tr>
+<tr> <th> f1-answer </th> <th>3.87</th><th>10.36</th><th>2.21</th><th>1.05</th></tr>
+<tr> <th> avg. </th> <th>3.03</th><th>5.73</th><th>1.50</th><th>2.28</th></tr>
 <tr>
     <th rowspan = 3>qa4</th>
-<th> f1-answer </th><th><th></th></th></th><th><th></th>
+<th> f1-cite </th><th>0.00</th><th>3.89</th><th>0.66</th><th>6.52</th>
   </tr>
-<tr> <th> f1-cite </th> <th></th><th></th></th><th><th></th></tr>
-<tr> <th> f1-avg. </th> <th></th><th></th></th><th><th></th></tr>
+<tr> <th> f1-answer </th><th>44.17</th><th>72.50</th><th>32.53</th><th>69.17</th></tr>
+<tr> <th> avg. </th> <th>22.08</th><th>38.20</th><th>16.60</th><th>37.84</th></tr>
 <tr>
     <th rowspan = 3>qa5</th>
-<th> f1-answer </th><th><th></th></th></th><th><th></th>
+<th> f1-cite </th><th>5.27</th><th>1.06</th><th>0.28</th><th>4.95</th>
   </tr>
-<tr> <th> f1-cite </th> <th></th><th></th></th><th><th></th></tr>
-<tr> <th> f1-avg. </th> <th></th><th></th></th><th><th></th></tr>
-<tr> <th colspan = 2>ZH - Avg.</th><th></th><th></th></th><th><th></th></tr>
+<tr> <th> acc </th> <th>28.18</th><th>44.55</th><th>6.96</th><th>57.59</th></tr>
+<tr> <th> avg. </th> <th>16.73</th><th>22.80</th><th>3.62</th><th>31.27</th></tr>
+<tr> <th colspan = 2>ZH - Avg.</th><th>12.56</th><th>19.91</th><th>7.00</th><th>15.60</th></tr>
   <tr>
-    <th>EN - Task</th>  <th>Metric</th><th>Llama3.1<br>-8B-Instruct</th> <th>Qwen2.5<br>-7B-Instruct</th>
-  <th>Mistral-7B<br>-Instruct-v0.2</th><th> glm-4<br>-9b-chat</th></tr>
+    <th>EN - Task</th>  <th>Metric (%)</th><th>Llama3.1<br>-8B-Instruct</th> <th>Qwen2.5<br>-7B-Instruct</th>
+  <th>Mistral-7B<br>-Instruct-v0.3</th><th> glm-4<br>-9b-chat</th></tr>
 <tr>
     <th rowspan = 3>qa1</th>
-<th> f1-answer </th><th><th></th></th></th><th><th></th>
+<th> f1-cite </th><th>49.74</th><th>18.14</th><th>18.79</th><th>46.27</th>
   </tr>
-<tr> <th> f1-cite </th> <th></th><th></th></th><th><th></th></tr>
-<tr> <th> f1-avg. </th> <th></th><th></th></th><th><th></th></tr>
+<tr> <th> f1-answer </th> <th>14.53</th><th>12.75</th><th>84.59</th><th>12.10</th></tr>
+<tr> <th> avg. </th> <th>32.14</th><th>15.44</th><th>51.69</th><th>29.18</th></tr>
 <tr>
     <th rowspan = 3>qa2</th>
-<th> f1-answer </th><th><th></th></th></th><th><th></th>
+<th> f1-cite </th><th>28.89</th><th>9.90</th><th>5.20</th><th>38.83</th>
   </tr>
-<tr> <th> f1-cite </th> <th></th><th></th></th><th><th></th></tr>
-<tr> <th> f1-avg. </th> <th></th><th></th></th><th><th></th></tr>
+<tr> <th> f1-answer </th> <th>22.21</th><th>18.46</th><th>28.31</th><th>16.80</th></tr>
+<tr> <th> avg. </th> <th>25.55</th><th>14.18</th><th>16.76</th><th>27.82</th></tr>
 <tr>
     <th rowspan = 3>qa3</th>
-<th> f1-answer </th><th><th></th></th></th><th><th></th>
+<th> f1-cite </th><th>7.22</th><th>12.50</th><th>20.69</th><th>13.04</th>
   </tr>
-<tr> <th> f1-cite </th> <th></th><th></th></th><th><th></th></tr>
-<tr> <th> f1-avg. </th> <th></th><th></th></th><th><th></th></tr>
+<tr> <th> f1-answer </th> <th>12.94</th><th>11.49</th><th>14.17</th><th>8.71</th></tr>
+<tr> <th> avg. </th> <th>10.08</th><th>12.00</th><th>17.43</th><th>10.88</th></tr>
 <tr>
     <th rowspan = 3>qa4</th>
-<th> f1-answer </th><th><th></th></th></th><th><th></th>
+<th> f1-cite </th><th>22.87</th><th>13.11</th><th>19.51</th><th>24.42</th>
   </tr>
-<tr> <th> f1-cite </th> <th></th><th></th></th><th><th></th></tr>
-<tr> <th> f1-avg. </th> <th></th><th></th></th><th><th></th></tr><tr>
+<tr> <th> acc </th> <th>36.25</th><th>57.40</th><th>24.06</th><th>76.12</th></tr>
+<tr> <th> avg. </th> <th>29.56</th><th>35.25</th><th>21.78</th><th>50.27</th><tr>
     <th rowspan = 3>qa5</th>
-<th> f1-answer </th><th><th></th></th></th><th><th></th>
+<th> f1-cite </th><th>30.83</th><th>18.06</th><th>12.56</th><th>38.05</th>
   </tr>
-<tr> <th> f1-cite </th> <th></th><th></th></th><th><th></th></tr>
-<tr> <th> f1-avg. </th> <th></th><th></th></th><th><th></th></tr>
-<tr> <th colspan = 2>EN - Avg.</th><th></th><th></th></th><th><th></th></tr>
-<tr> <th colspan = 2> <b> AVG. <b></th><th></th><th></th></th><th><th></th></tr>
+<tr> <th> rough-niah </th><th>93.50</th><th>97.79</th><th>8.76</th><th>96.19</th></tr>
+<tr> <th> avg. </th><th>62.16</th><th>57.92</th><th>10.66</th><th>67.12</th></tr>
+<tr> <th colspan = 2>EN - Avg.</th><th>31.90</th><th>26.96</th><th>23.66</th><th>37.05</th></tr>
+<tr style="font-weight: bold;"> <th colspan = 2> <b> AVG. <b></th><th>22.23</th><th>23.43</th><th>15.33</th><th>26.82</th></tr>
 </table>
 
 ## Submission

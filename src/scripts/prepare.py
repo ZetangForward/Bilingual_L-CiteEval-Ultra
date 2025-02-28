@@ -17,16 +17,17 @@ def format_tasks(all_tasks):
     return formatted_tasks
 def transform_zh(raw_data,task_name):
     if task_name=="counting_stars":
-        if raw_data["context_length"]=="0k":
-            raw_data["passage"] = raw_data["question"].split("\n")
-        else:
-            raw_data["passage"] = raw_data["question"].split("。")
+        raw_data["passage"] = raw_data["question"].split("。")
     else:
         raw_data["passage"] = (raw_data["context"]+raw_data["question"]).split("。")
+    result = []
+    for i in range(0, len(raw_data["passage"]) , 6):
+        group = raw_data["passage"][i:i + 6]
+        joined_group = "。".join(group)+"。"
+        result.append(joined_group)
+    raw_data["passage"] = result
     raw_data["choices"] = ""
     raw_data["label"] = raw_data["answer"]
-
-    
     return raw_data
 def transform_en(raw_data):
     raw_data["passage"] = raw_data["docs"]
