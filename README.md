@@ -118,7 +118,7 @@ python scripts/eval_track2.py --folder_name <save_tag> # default: python ./scrip
 ```
 
 
-We present the results of several common models:Llama-3.1-8B-Instruct
+We present the results of several common models:
 
 <table style="font-size: 16px; margin: auto;margin: auto; width: 85%;">
   <tr>
