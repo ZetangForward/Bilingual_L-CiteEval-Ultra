@@ -110,10 +110,10 @@ python scripts/run.py \
 
 ```bash
 # track 1:
-python scripts/eval_track1.py --folder_name <save_tag> # default: python ./scripts/eval_track1.py --folder_name Llama-3.1-8B-Instruct
+python scripts/eval_track1.py --folder_name <save_tag> # default: python scripts/eval_track1.py --folder_name Llama-3.1-8B-Instruct
 
 # track 2:
-python scripts/eval_track2.py --folder_name <save_tag> # default: python ./scripts/eval_track2.py --folder_name Llama-3.1-8B-Instruct
+python scripts/eval_track2.py --folder_name <save_tag> # default: python scripts/eval_track2.py --folder_name Llama-3.1-8B-Instruct
 ```
 
 
