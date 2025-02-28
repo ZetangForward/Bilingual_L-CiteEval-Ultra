@@ -39,7 +39,7 @@ Finally, we add **counting_stars** subset directly from the open source  library
 
 For English dataset, we also offer five subtasks. First, we build the **multihop_qa** subtask based on [HotpotQA](https://arxiv.org/pdf/1809.09600)  and [2WikiMultihopQA](https://arxiv.org/pdf/2011.01060) , and build the **single_qa** subtask based on [NarrativeQA](https://arxiv.org/pdf/1712.07040) and [Natural Questions](https://aclanthology.org/Q19-1026.pdf). And for these two tasks, we add additional samples with difficulty levels for users' choices. Then, based on the likeihood that the models may not answer the question according to the provided context, we designed a number of **counterfact** samples, to test the faithfulness of the models to the provided context.
 
-Finally, we add **counting_stars** subset directly from the open source  library [Counting-Stars](https://github.com/nick7nlp/Counting-Stars) , and add **niah** subtask from the open source [NIAH](https://github.com/gkamradt/LLMTest_NeedleInAHaystack/tree/main) .
+Finally, we add **counting_stars** subset directly from the open source  library [Counting-Stars](https://github.com/nick7nlp/Counting-Stars) , and add **niah** subset from the open source library [NIAH](https://github.com/gkamradt/LLMTest_NeedleInAHaystack/tree/main) .
 
 <table style="font-size: 16px; margin: auto;margin: auto; width: 100%;">
   <tr>
@@ -73,7 +73,7 @@ For evaluation, we provide a quick-start evalutaion framework, which mainly eval
 
 ### Environment Setup
 
-Remeber download the appropriate verison of flash-attn from  [flash-attn](https://github.com/Dao-AILab/flash-attention/releases) , then run:
+Remember to download the appropriate verison of flash-attn from  [flash-attn](https://github.com/Dao-AILab/flash-attention/releases) , then run:
 
 ```bash
 git clone https://github.com/ZetangForward/Bilingual_L-CiteEval-Ultra.git
@@ -88,7 +88,7 @@ pip install <path_to_flash_attn_whl_file>
 
 ### Start Evaluation
 
-Following the environment setup, it's recommended that modify the configuration in **./config/default.yaml** and run in the current directory:
+Following the environment setup, it's recommended to modify the configuration in **./config/default.yaml** and run in the current directory:
 
 ```bash
 python scripts/run.py  # or export HF_ENDPOINT=https://hf-mirror.com && python scripts/run.py
