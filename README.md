@@ -1,5 +1,7 @@
 # Task 6 - Faithful Bilingual Long-context Retrieval and Generation Challenge
+
 [[中文版](README_ZH.md)] [[English](README.md)]
+
 ## Task Introduction
 
 In the field of long-context models (LCMs), a key characteristic is the "retrieval-then-generation" paradigm. This involves the model first implicitly identifying key information within the context and then performing generation based on the aggregated context. While significant progress has been made in developing long-context models, i.e., achieving strong performance on open-source long-context benchmarks, there is a need for a more fine-grained and accurate evaluation of their ability to retrieve relevant information and generate faithful outputs. Furthermore, while many open-source LCMs perform well in English-language tasks, their performance in Chinese-language tasks remains unsatisfactory, highlighting a significant gap in the field. To address these challenges, this shared task focuses on assessing two core capabilities of LCMs: retrieval and generation, in bilingual scenarios (Chinese and English). Participants are required to complete the task solely using the LCMs themselves, without relying on external modules like retrieval-augmented generation (RAG). This shared task includes two tracks:
@@ -15,7 +17,7 @@ L-CiteEval is a long-context evaluation benchmark, designed to evaluate the info
 
 ## Data Format
 
-We build our bilingual evaluation dataset based on [L-CiteEval](https://arxiv.org/abs/2410.02115). 
+We build our bilingual evaluation dataset based on [L-CiteEval](https://arxiv.org/abs/2410.02115).
 For more construction details, one can directly refer to this paper.
 
 ### Chinese
@@ -179,14 +181,10 @@ We present the results of several common models:
 
 Training data is unlimited. The following datasets are recommended:
 
-- LongAlpaca[https://huggingface.co/datasets/Yukang/LongAlpaca-12k]
-
-- LongAlign[https://huggingface.co/datasets/THUDM/LongAlign-10k]
-
-- LongMIT[https://huggingface.co/datasets/donmaclean/LongMIT-128K]
-
-- Context Synthesis[https://huggingface.co/datasets/Wenhao97/gpt4o-mini-context-synthesis]
-
+- [LongAlpaca](https://huggingface.co/datasets/Yukang/LongAlpaca-12k)
+- [LongAlign](https://huggingface.co/datasets/THUDM/LongAlign-10k)
+- [LongMIT](https://huggingface.co/datasets/donmaclean/LongMIT-128K)
+- [Context Synthesis](https://huggingface.co/datasets/Wenhao97/gpt4o-mini-context-synthesis)
 
 ## Submission
 
