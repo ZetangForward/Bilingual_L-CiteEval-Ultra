@@ -69,7 +69,7 @@ en_dataset = load_dataset('ZetangForward/Bilingual_CiteEval', revision="en")
 
 ## Evaluation
 
-For evaluation, we provide a quick-start evalutaion framework, which evalute models' ability on metrics:  precision, recall, f1 and cite numbers.
+For evaluation, we provide a quick-start evalutaion framework, which mainly evaluate models' ability on metrics:   f1-answer and f1-cite.
 
 ### Environment Setup
 
