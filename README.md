@@ -139,7 +139,6 @@ We present the results of several common models:Llama-3.1-8B-Instruct
 <tr><th colspan = 2> AVG.</th><th>15.11</th><th>8.23</th><th>8.05</th><th>16.60</th></tr>
 
 
-
 <table style="font-size: 16px; margin: auto;margin: auto; width: 85%;">
   <tr>
     <th>Track 2</th>  <th>LGF (%)</th><th>Llama3.1<br>-8B-Instruct</th> <th>Qwen2.5<br>-7B-Instruct</th>
