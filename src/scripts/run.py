@@ -1,4 +1,3 @@
-# python lte/main.py --model_path /nvme1/hf_models/Llama-3.1-8B-Instruct --rag raptor   --eval    --benchmark tasks/General/LooGLE/LooGLE.yaml --device 3 --device_split_num 2 --limit 1
 import os, sys, time, random, hydra, subprocess, torch
 import numpy as np, torch.multiprocessing as mp
 from loguru import logger
