@@ -22,7 +22,7 @@ L-CiteEval 是一个长文本评测基准，旨在评估NLP模型在长上下文
 
 ### 中文
 
-对于中文数据集，我们主要提供多跳任务，包括 **1_hop**，**2_hop** 和 **3-hop**，每个样本的干扰项长度范围从 1 到 16。基于 1-hop 任务，我们通过为 1_hop 问题添加答案构建 **yes_no** 任务。如果添加的答案正确，那么对应的 'yes-no' 任务答案为 'yes'，否则 'yes-no' 任务答案为 'no'。我们的数据集中，'answer-yes' 样本和 'answer-no' 样本的数量是平衡的。
+对于中文数据集，我们主要提供多跳任务，包括 **1_hop**，**2_hop** 和 **3_hop**，每个样本的干扰项长度范围从 1 到 16。基于 1-hop 任务，我们通过为 1_hop 问题添加答案构建 **yes_no** 任务。如果添加的答案正确，那么对应的 'yes-no' 任务答案为 'yes'，否则 'yes-no' 任务答案为 'no'。我们的数据集中，'answer-yes' 样本和 'answer-no' 样本的数量是平衡的。
 
 最后，我们直接从开源库 [Counting-Stars](https://github.com/nick7nlp/Counting-Stars) 中添加 **counting_stars** 子集，并确保其数据量与其他子任务一致。
 

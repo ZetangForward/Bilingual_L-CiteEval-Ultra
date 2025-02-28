@@ -22,7 +22,7 @@ For more construction details, one can directly refer to this paper.
 
 ### Chinese
 
-For Chinese dataset, we mainly provide  multi-hop tasks, including **1_hop**, **2_hop** and **3-hop**, each sample of which has interference needles ranging in length from 1 to 16. Based on 1-hop task, we build  **yes_no**  task by adding an answer to the 1_hop question. If the added answer is correct, then the corresponding  answer of the  'yes-no' task is 'yes', otherwise the 'yes-no' task's answer is 'no' . The 'answer-yes' samples and 'answer-no' samples are equally divided in our dataset.
+For Chinese dataset, we mainly provide  multi-hop tasks, including **1_hop**, **2_hop** and **3_hop**, each sample of which has interference needles ranging in length from 1 to 16. Based on 1-hop task, we build  **yes_no**  task by adding an answer to the 1_hop question. If the added answer is correct, then the corresponding  answer of the  'yes-no' task is 'yes', otherwise the 'yes-no' task's answer is 'no' . The 'answer-yes' samples and 'answer-no' samples are equally divided in our dataset.
 
 Finally, we add **counting_stars** subset directly from the open source  library [Counting-Stars](https://github.com/nick7nlp/Counting-Stars) , and make sure that its volume is consistent with other subtasks.
 
