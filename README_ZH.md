@@ -141,7 +141,7 @@ python scripts/eval_track2.py --folder_name <save_tag> # default: python ./scrip
 <tr><th>counting_stars</th><th>22.87</th><th>13.11</th><th>19.51</th><th>23.97</th></tr>
 <tr><th>niah</th><th>30.83</th><th>18.06</th><th>12.56</th><th>40.69</th></tr>
 <tr><th>avg.</th><th>27.91</th><th>14.34</th><th>15.35</th><th>28.81</th></tr>
-<tr><th colspan = 2> AVG.</th><th>15.11</th><th>8.23</th><th>8.05</th><th>16.6</th></tr>
+<tr><th colspan = 2> AVG.</th><th>15.11</th><th>8.23</th><th>8.05</th><th>16.60</th></tr>
 
 
 <table style="font-size: 16px; margin: auto;margin: auto; width: 85%;">

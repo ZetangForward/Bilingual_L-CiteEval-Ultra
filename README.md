@@ -136,7 +136,7 @@ We present the results of several common models:Llama-3.1-8B-Instruct
 <tr><th>counting_stars</th><th>22.87</th><th>13.11</th><th>19.51</th><th>23.97</th></tr>
 <tr><th>niah</th><th>30.83</th><th>18.06</th><th>12.56</th><th>40.69</th></tr>
 <tr><th>avg.</th><th>27.91</th><th>14.34</th><th>15.35</th><th>28.81</th></tr>
-<tr><th colspan = 2> AVG.</th><th>15.11</th><th>8.23</th><th>8.05</th><th>16.6</th></tr>
+<tr><th colspan = 2> AVG.</th><th>15.11</th><th>8.23</th><th>8.05</th><th>16.60</th></tr>
 
 
 
@@ -155,7 +155,7 @@ We present the results of several common models:Llama-3.1-8B-Instruct
 <tr><th>counterfact</th><th>12.94</th><th>11.49</th><th>14.17</th><th>1.01</th></tr>
 <tr><th>counting_stars</th><th>36.25</th><th>57.40</th><th>24.06</th><th>77.92</th></tr>
 <tr><th>niah</th><th>93.5</th><th>97.79</th><th>8.76</th><th>96.33</th></tr>
-<tr><th>avg.</th><th>35.89</th><th>39.58</th><th>31.98</th><th>37.0</th></tr>
+<tr><th>avg.</th><th>35.89</th><th>39.58</th><th>31.98</th><th>37.00</th></tr>
 <tr><th colspan = 2> AVG.</th><th>29.36</th><th>38.63</th><th>22.62</th><th>31.90</th></tr></table>
 
 ## Training Data Recommendation
