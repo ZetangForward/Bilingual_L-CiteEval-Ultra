@@ -14,7 +14,6 @@ server: transformers # choices ['transformers', 'vllm']
 torch_dtype: torch.bfloat16
 devices: [0, 1, 2, 3, 4, 5, 6, 7] # your devices
 tp_size: 2 # the number of gpu that each task needs
-do_eval: true  # If do_eval: False is provided, the process will terminate after the model's generation and before the evaluation.
 adapter_path: null #  the adapter_path parameter specifies the location of an adapter model.
 template: null  #specifies adding a template to the data for the model to generate, for example: ''[INST] Below is a context and an instruction.
 max_model_len: 128000 #The maximum input length.

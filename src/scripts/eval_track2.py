@@ -1,4 +1,4 @@
-## python scripts/eval.py --folder_name  Meta-Llama-3.1-8B-Instruct
+## python scripts/eval_track2.py --folder_name  Meta-Llama-3.1-8B-Instruct
 import os, sys, argparse, json
 import numpy as np, pandas as pd
 from tqdm import tqdm
@@ -23,20 +23,15 @@ from l_citeeval_metrics import (
     L_cite_eval_Qa_Score_zh
 )
 
-metric1 = {"l_cite_eval_cite":None,"l_cite_eval_qa_score":None}
-metric2 = {"l_cite_eval_counting_stars_cite":None,"l_cite_eval_counting_stars":None}
-metric3 = {"l_cite_eval_niah_cite":None,"rough_niah":None}
-metric4 = {"l_cite_eval_counting_stars_cite_zh":None,"l_cite_eval_counting_stars_zh":None}
-metric5 = {"l_cite_eval_cite_zh":None,"l_cite_eval_qa_score_zh":None}
+metric1 = {"l_cite_eval_qa_score":None}
+metric2 = {"l_cite_eval_counting_stars":None}
+metric3 = {"rough_niah":None}
+metric4 = {"l_cite_eval_counting_stars_zh":None}
+metric5 = {"l_cite_eval_qa_score_zh":None}
 metric_en = {"multihop_qa": metric1,"single_qa":metric1,"counterfact":metric1,'niah': metric3,  'counting_stars':metric2}
 metric_zh = {"1_hop": metric5,"2_hop":metric5,"3_hop":metric5,'yes_no': metric5, 'counting_stars':metric4}
 
 METRICS_REGISTRY={
-    "l_cite_eval_counting_stars_cite":L_cite_eval_counting_stars_cite,
-    "l_cite_eval_cite":L_cite_eval_cite,
-    "l_cite_eval_niah_cite":L_cite_eval_niah_cite,
-    "l_cite_eval_counting_stars_cite_zh":L_cite_eval_counting_stars_cite_zh,
-    "l_cite_eval_cite_zh":L_cite_eval_cite_zh,
     "l_cite_eval_qa_score":L_cite_eval_Qa_Score,
     "l_cite_eval_counting_stars":L_cite_eval_Counting_Stars,
     "l_cite_eval_counting_stars_zh":L_cite_eval_Counting_Stars_zh,
@@ -52,7 +47,7 @@ def print_dict_in_table_format(data, excel_file_path):
     task_name_max_len = max(len(task) for tasks in data.values() for task in tasks.keys())
     metric_max_len = max(len(metric) for tasks in data.values() for metrics in tasks.values() for metric in metrics.keys())
     column_widths = [benchmark_name_max_len + 2, task_name_max_len + 10, metric_max_len + 5, 10, 10]
-    header = ["BenchMark", "Tasks", "Metric", "Score", "AVG"]
+    header = ["LGF(%)", "Tasks", "Metric", "Score", "AVG"]
 
     logger.info("|{}|{}|{}|{}|{}|".format(
         header[0].center(column_widths[0], ' '),
@@ -73,17 +68,16 @@ def print_dict_in_table_format(data, excel_file_path):
     rows = []
     for benchmark_name, tasks in data.items():
         benchmark_scores = []
-        for task, metrics in tasks.items():
-            avg = 0
-            i = 0
-            for metric, value in metrics.items():
-                if "f1" not in metric and "acc" not in metric and "niah" not in metric:
-                    continue 
-                i+=1
-                avg += value
-                if i ==2:
-                    avg = avg/2
-                    avg = round(avg,2)
+        task_name_zh = ["1_hop", "2_hop", "3_hop", "yes_no", "counting_stars"]
+        task_name_en = ["multihop_qa", "single_qa", "counterfact","niah", "counting_stars"]
+        if "1_hop" in tasks:
+            for task in task_name_zh:
+                metrics = tasks[task]
+                for metric, value in metrics.items():
+                    if "f1" not in metric and "acc" not in metric and "niah" not in metric:
+                        continue 
+                    if "cite" in metric:
+                        continue
                     logger.info("|{}|{}|{}|{}|{}|".format(
                         benchmark_name.center(column_widths[0], ' '),
                         task.center(column_widths[1], ' '),
@@ -93,36 +87,51 @@ def print_dict_in_table_format(data, excel_file_path):
                     ))
                     rows.append([benchmark_name, task, metric, value, ""])
                     logger.info("|{}|{}|{}|{}|{}|".format(
-                        benchmark_name.center(column_widths[0], ' '),
-                        task.center(column_widths[1], ' '),
-                        "avg".center(column_widths[2], ' '),
-                        str(avg).center(column_widths[3], ' '),
-                        str(avg).center(column_widths[4], ' ')
+                        "-" * column_widths[0],
+                        "-" * column_widths[1],
+                        "-" * column_widths[2],
+                        "-" * column_widths[3],
+                        "-" * column_widths[4]
                     ))
-                    rows.append([benchmark_name, task, "avg", avg, avg])
-                else:
-                    logger.info("|{}|{}|{}|{}|{}|".format(
-                        benchmark_name.center(column_widths[0], ' '),
-                        task.center(column_widths[1], ' '),
-                        metric.center(column_widths[2], ' '),
-                        str(value).center(column_widths[3], ' '),
-                        "".center(column_widths[4], ' ')
-                    ))
-                    rows.append([benchmark_name, task, metric, value, ""])
 
-                try:
-                    score = float(value)
-                    benchmark_scores.append(score)
-                    all_scores.append(score)
-                except ValueError:
-                    logger.warning(f"无法将 {value} 转换为浮点数，跳过该值。")
-            logger.info("|{}|{}|{}|{}|{}|".format(
-                "-" * column_widths[0],
-                "-" * column_widths[1],
-                "-" * column_widths[2],
-                "-" * column_widths[3],
-                "-" * column_widths[4]
-            ))
+                    try:
+                        score = float(value)
+                        benchmark_scores.append(score)
+                        all_scores.append(score)
+                    except ValueError:
+                        logger.warning(f"无法将 {value} 转换为浮点数，跳过该值。")
+
+        else:
+            for task in task_name_en:
+                
+                metrics = tasks[task]
+                for metric, value in metrics.items():
+                    if "f1" not in metric and "acc" not in metric and "niah" not in metric :
+                        continue 
+                    if "cite" in metric:
+                        continue
+                    logger.info("|{}|{}|{}|{}|{}|".format(
+                        benchmark_name.center(column_widths[0], ' '),
+                        task.center(column_widths[1], ' '),
+                        metric.center(column_widths[2], ' '),
+                        str(value).center(column_widths[3], ' '),
+                        "".center(column_widths[4], ' ')
+                    ))
+                    rows.append([benchmark_name, task, metric, value, ""])
+                    logger.info("|{}|{}|{}|{}|{}|".format(
+                        "-" * column_widths[0],
+                        "-" * column_widths[1],
+                        "-" * column_widths[2],
+                        "-" * column_widths[3],
+                        "-" * column_widths[4]
+                    ))
+
+                    try:
+                        score = float(value)
+                        benchmark_scores.append(score)
+                        all_scores.append(score)
+                    except ValueError:
+                        logger.warning(f"无法将 {value} 转换为浮点数，跳过该值。")
 
 
         if benchmark_scores:
@@ -162,11 +171,10 @@ def print_dict_in_table_format(data, excel_file_path):
         ))
         rows.append(["Total", "Average", "Overall", "", total_avg])
 
-    # 创建 DataFrame
-    df = pd.DataFrame(rows, columns=header)
 
-    # 保存到 Excel 文件
+    df = pd.DataFrame(rows, columns=header)
     df.to_excel(excel_file_path, index=False)
+
 def construct_metrics(metrics_configs,task_name):
     clock = 0
     for metrics_name,metrics_config in metrics_configs.items():
@@ -179,7 +187,7 @@ def construct_metrics(metrics_configs,task_name):
                 clock +=1
             else:
                 print()                                                                           
-            pipe = pipeline("text-classification",model="tasksource/deberta-base-long-nli", device="cuda:0")
+            pipe = pipeline("text-classification", model="tasksource/deberta-base-long-nli", device="cuda:0")
         else:
             pipe = "0";
         metrics_configs[metrics_name]["evaluation"] = get_metric(metrics_name)(pipe=pipe,task_name=task_name,**metrics_config)
@@ -217,7 +225,7 @@ def eval():
                 metrics = construct_metrics(metric_en[task_name],task_name)
             else:
                 metrics = construct_metrics(metric_zh[task_name],task_name)
-            save_task_path = os.path.join("generation",benchmark_name,"results",folder_name,task_name+".jsonl")
+            save_task_path = os.path.join("generation",benchmark_name,"track2_results",folder_name,task_name+".jsonl")
             generation_results_path = os.path.join("generation",benchmark_name,"prediction",folder_name,task_name+".jsonl")
             os.makedirs(save_task_path, exist_ok=True)
             if not os.path.exists(generation_results_path):
@@ -238,9 +246,10 @@ def eval():
                         continue
 
                     eval_dict["score"] = {}
+                    
                     passage, pred, label = org_data[eval_dict["id"]], eval_dict["pred"], eval_dict["label"]
-                    for metric_name,metric in metrics.items():
-                        score = metrics[metric_name]["evaluation"](passage,label, pred)
+                    for metric_name, metric in metrics.items():
+                        score = metrics[metric_name]["evaluation"](passage, label, pred)
                         if isinstance(score,dict):
                             for metric_name_sub in score:
                                 eval_dict["score"].update(score)
@@ -273,7 +282,7 @@ def eval():
                 json.dump(dump_data, fout, indent=4, ensure_ascii=False)
                 
 
-        output_path = f"./generation/{benchmark_name}/results/{folder_name}"
+        output_path = f"./generation/{benchmark_name}/track2_results/{folder_name}"
         os.makedirs(output_path,exist_ok=True)
         print_dict_in_table_format(benchmark_dict,f"./generation/{benchmark_name}/results/{folder_name}/output_table.xlsx")
         logger.info("results_table is saved in {}".format(output_path+"/output_table.xlsx"))

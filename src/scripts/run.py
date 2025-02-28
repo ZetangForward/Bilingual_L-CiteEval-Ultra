@@ -54,11 +54,6 @@ def main(cfg):
     evaluator.run(cfg.tp_size)
     
     logger.info(f"All generated data has been successfully stored in generation/")
-    #eval
-    if cfg.do_eval:
-        command = ["python","./scripts/eval.py",
-                    "--folder_name",f"{save_tag}"]
-        subprocess.run(command)
 
     #execution_time
     execution_time = time.time()-start_time

@@ -69,11 +69,11 @@ en_dataset = load_dataset('ZetangForward/Bilingual_CiteEval', revision="en")
 
 ## Evaluation
 
-For evaluation, we provide a quick-start evalutaion framework, which mainly evaluate models' ability on metrics:   f1-answer and f1-cite.
+We provide a quick-start evalutaion framework, which mainly evaluate models' ability on metrics:  LRF and LGF.
 
 ### Environment Setup
 
-Remember to download the appropriate verison of flash-attn from  [flash-attn](https://github.com/Dao-AILab/flash-attention/releases) , then run:
+Please download the appropriate verison of flash-attn from  [flash-attn](https://github.com/Dao-AILab/flash-attention/releases) , then run:
 
 ```bash
 git clone https://github.com/ZetangForward/Bilingual_L-CiteEval-Ultra.git
@@ -88,7 +88,7 @@ pip install <path_to_flash_attn_whl_file>
 
 ### Start Evaluation
 
-Following the environment setup, it's recommended to modify the configuration in **./config/default.yaml** and run in the current directory:
+Following the environment setup, it's recommended to modify the configuration in **./config/default.yaml** and run the inference script  in the current directory:
 
 ```bash
 python scripts/run.py  # or export HF_ENDPOINT=https://hf-mirror.com && python scripts/run.py
@@ -104,78 +104,59 @@ devices=[0,1] \
 tp_size=2
 ```
 
-We present the results of several common models:
+
+
+After reasoning, you may do evaluating according to your track by run:
+
+
+```bash
+# track 1:
+python scripts/eval_track1.py --folder_name <save_tag> # default: python ./scripts/eval_track1.py --folder_name Llama-3.1-8B-Instruct
+
+# track 2:
+python scripts/eval_track2.py --folder_name <save_tag> # default: python ./scripts/eval_track2.py --folder_name Llama-3.1-8B-Instruct
+```
+
+
+We present the results of several common models:Llama-3.1-8B-Instruct
 
 <table style="font-size: 16px; margin: auto;margin: auto; width: 85%;">
   <tr>
-    <th>ZH - Task</th>  <th>Metric (%)</th><th>Llama3.1<br>-8B-Instruct</th> <th>Qwen2.5<br>-7B-Instruct</th>
+    <th>Track 1</th>  <th>LRF (%)</th><th>Llama3.1<br>-8B-Instruct</th> <th>Qwen2.5<br>-7B-Instruct</th>
   <th>Mistral-7B<br>-Instruct-v0.3</th><th> glm-4<br>-9b-chat</th></tr>
-<tr>
-    <th rowspan = 3>qa1</th>
-<th> f1-cite </th><th>0.19</th><th>2.92</th><th>1.29</th><th>4.33</th>
-  </tr>
-<tr> <th> f1-answer </th> <th>27.61</th><th>36.46</th><th>16.97</th><th>3.72</th></tr>
-<tr> <th> avg. </th> <th>13.9</th><th>19.69</th><th>9.13</th><th>4.03</th></tr>
-<tr>
-    <th rowspan = 3>qa2</th>
-<th> f1-cite </th><th>3.85</th><th>1.64</th><th>0.69</th><th>2.61</th>
-  </tr>
-<tr> <th> f1-answer </th> <th>10.31</th><th>24.58</th><th>7.66</th><th>2.49</th></tr>
-<tr> <th> avg. </th> <th>7.08</th><th>13.11</th><th>4.18</th><th>2.55</th></tr>
-<tr>
-    <th rowspan = 3>qa3</th>
-<th> f1-cite </th><th>2.19</th><th>1.10</th><th>0.78</th><th>3.52</th>
-  </tr>
-<tr> <th> f1-answer </th> <th>3.87</th><th>10.36</th><th>2.21</th><th>1.05</th></tr>
-<tr> <th> avg. </th> <th>3.03</th><th>5.73</th><th>1.50</th><th>2.28</th></tr>
-<tr>
-    <th rowspan = 3>qa4</th>
-<th> f1-cite </th><th>0.00</th><th>3.89</th><th>0.66</th><th>6.52</th>
-  </tr>
-<tr> <th> f1-answer </th><th>44.17</th><th>72.50</th><th>32.53</th><th>69.17</th></tr>
-<tr> <th> avg. </th> <th>22.08</th><th>38.20</th><th>16.60</th><th>37.84</th></tr>
-<tr>
-    <th rowspan = 3>qa5</th>
-<th> f1-cite </th><th>5.27</th><th>1.06</th><th>0.28</th><th>4.95</th>
-  </tr>
-<tr> <th> acc </th> <th>28.18</th><th>44.55</th><th>6.96</th><th>57.59</th></tr>
-<tr> <th> avg. </th> <th>16.73</th><th>22.80</th><th>3.62</th><th>31.27</th></tr>
-<tr> <th colspan = 2>ZH - Avg.</th><th>12.56</th><th>19.91</th><th>7.00</th><th>15.60</th></tr>
+<tr><th rowspan = 6> ZH </th> <th>1_hop</th> <th>0.19</th><th>2.92</th><th>1.29</th><th>4.33</th></tr>
+<tr><th>2_hop</th><th>3.85</th><th>1.64</th><th>0.69</th><th>2.61</th></tr>
+<tr><th>3_hop</th><th>2.19</th><th>1.10</th><th>0.78</th><th>3.52</th></tr>
+<tr><th>yes_no</th><th>0.00</th><th>3.89</th><th>0.66</th><th>6.52</th></tr>
+<tr><th>counting_stars</th><th>5.27</th><th>1.06</th><th>0.28</th><th>4.95</th></tr>
+<tr><th>avg.</th><th>2.30</th><th>2.12</th><th>0.74</th><th>4.39</th></tr>
+<tr><th rowspan = 6>EN</th><th>multihop_qa</th><th>49.74</th><th>18.14</th><th>18.79</th><th>43.33</th></tr>
+<tr><th>single_qa</th><th>28.89</th><th>9.90</th><th>5.20</th><th>30.85</th></tr>
+<tr><th>counterfact</th><th>7.22</th><th>12.50</th><th>20.69</th><th>5.20</th></tr>
+<tr><th>counting_stars</th><th>22.87</th><th>13.11</th><th>19.51</th><th>23.97</th></tr>
+<tr><th>niah</th><th>30.83</th><th>18.06</th><th>12.56</th><th>40.69</th></tr>
+<tr><th>avg.</th><th>27.91</th><th>14.34</th><th>15.35</th><th>28.81</th></tr>
+<tr><th colspan = 2> AVG.</th><th>15.11</th><th>8.23</th><th>8.05</th><th>16.6</th></tr>
+
+
+
+<table style="font-size: 16px; margin: auto;margin: auto; width: 85%;">
   <tr>
-    <th>EN - Task</th>  <th>Metric (%)</th><th>Llama3.1<br>-8B-Instruct</th> <th>Qwen2.5<br>-7B-Instruct</th>
+    <th>Track 2</th>  <th>LGF (%)</th><th>Llama3.1<br>-8B-Instruct</th> <th>Qwen2.5<br>-7B-Instruct</th>
   <th>Mistral-7B<br>-Instruct-v0.3</th><th> glm-4<br>-9b-chat</th></tr>
-<tr>
-    <th rowspan = 3>qa1</th>
-<th> f1-cite </th><th>49.74</th><th>18.14</th><th>18.79</th><th>46.27</th>
-  </tr>
-<tr> <th> f1-answer </th> <th>14.53</th><th>12.75</th><th>84.59</th><th>12.10</th></tr>
-<tr> <th> avg. </th> <th>32.14</th><th>15.44</th><th>51.69</th><th>29.18</th></tr>
-<tr>
-    <th rowspan = 3>qa2</th>
-<th> f1-cite </th><th>28.89</th><th>9.90</th><th>5.20</th><th>38.83</th>
-  </tr>
-<tr> <th> f1-answer </th> <th>22.21</th><th>18.46</th><th>28.31</th><th>16.80</th></tr>
-<tr> <th> avg. </th> <th>25.55</th><th>14.18</th><th>16.76</th><th>27.82</th></tr>
-<tr>
-    <th rowspan = 3>qa3</th>
-<th> f1-cite </th><th>7.22</th><th>12.50</th><th>20.69</th><th>13.04</th>
-  </tr>
-<tr> <th> f1-answer </th> <th>12.94</th><th>11.49</th><th>14.17</th><th>8.71</th></tr>
-<tr> <th> avg. </th> <th>10.08</th><th>12.00</th><th>17.43</th><th>10.88</th></tr>
-<tr>
-    <th rowspan = 3>qa4</th>
-<th> f1-cite </th><th>22.87</th><th>13.11</th><th>19.51</th><th>24.42</th>
-  </tr>
-<tr> <th> acc </th> <th>36.25</th><th>57.40</th><th>24.06</th><th>76.12</th></tr>
-<tr> <th> avg. </th> <th>29.56</th><th>35.25</th><th>21.78</th><th>50.27</th><tr>
-    <th rowspan = 3>qa5</th>
-<th> f1-cite </th><th>30.83</th><th>18.06</th><th>12.56</th><th>38.05</th>
-  </tr>
-<tr> <th> rough-niah </th><th>93.50</th><th>97.79</th><th>8.76</th><th>96.19</th></tr>
-<tr> <th> avg. </th><th>62.16</th><th>57.92</th><th>10.66</th><th>67.12</th></tr>
-<tr> <th colspan = 2>EN - Avg.</th><th>31.90</th><th>26.96</th><th>23.66</th><th>37.05</th></tr>
-<tr style="font-weight: bold;"> <th colspan = 2> <b> AVG. <b></th><th>22.23</th><th>23.43</th><th>15.33</th><th>26.82</th></tr>
-</table>
+<tr><th rowspan = 6> ZH </th> <th>1_hop</th> <th>27.61</th><th>36.46</th><th>16.97</th><th>3.72</th></tr>
+<tr><th>2_hop</th><th>10.31</th><th>24.58</th><th>7.66</th><th>2.49</th></tr>
+<tr><th>3_hop</th><th>3.87</th><th>10.36</th><th>2.21</th><th>1.05</th></tr>
+<tr><th>yes_no</th><th>44.17</th><th>72.50</th><th>32.53</th><th>69.17</th></tr>
+<tr><th>counting_stars</th><th>28.18</th><th>44.55</th><th>6.96</th><th>57.59</th></tr>
+<tr><th>avg.</th><th>22.83</th><th>37.69</th><th>13.27</th><th>26.80</th></tr>
+<tr><th rowspan = 6>EN</th><th>multihop_qa</th><th>14.53</th><th>12.75</th><th>84.59</th><th>4.27</th></tr>
+<tr><th>single_qa</th><th>22.21</th><th>18.46</th><th>28.31</th><th>5.49</th></tr>
+<tr><th>counterfact</th><th>12.94</th><th>11.49</th><th>14.17</th><th>1.01</th></tr>
+<tr><th>counting_stars</th><th>36.25</th><th>57.40</th><th>24.06</th><th>77.92</th></tr>
+<tr><th>niah</th><th>93.5</th><th>97.79</th><th>8.76</th><th>96.33</th></tr>
+<tr><th>avg.</th><th>35.89</th><th>39.58</th><th>31.98</th><th>37.0</th></tr>
+<tr><th colspan = 2> AVG.</th><th>29.36</th><th>38.63</th><th>22.62</th><th>31.90</th></tr></table>
 
 ## Training Data Recommendation
 
@@ -190,7 +171,7 @@ Training data is unlimited. The following datasets are recommended:
 
 For submission, the following materials should be packaged as one `zip` file and sent to [zecheng.tang@foxmail.com](zecheng.tang@foxmail.com):
 
-***Submission File** :  After running our evaluation framework, the output will be saved in **./src/generation** , please pack this folder into .zip format and submit this folder. If you use your own evaluation framework, make sure your submission should include the original output of the model and evaluation results for all tasks.
+***Submission File** :  After running our evaluation framework, the output will be saved in **./src/generation** , please pack this folder into .zip format and submit this folder. If you use your own evaluation framework, make sure your submission should include the original output of the model and the corresponding evaluation results for all tasks(Track1, Track2 or both).
 
 ## Contact & Citation
 
