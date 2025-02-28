@@ -82,10 +82,10 @@ For evaluation, we provide a quick-start evalutaion framework, which evalute mod
 
 ### Environment Setup
 
-Remeber download the appropriate verison of flash-attn from   [flash-attn](https://github.com/Dao-AILab/flash-attention/releases) , then run:
+Remeber download the appropriate verison of flash-attn from  [flash-attn](https://github.com/Dao-AILab/flash-attention/releases) , then run:
 
 ```bash
-git clone https://gitlab.com/iiGray/bilingual_citeeval_benchmark.git #把这个换成现在这个仓库
+git clone https://github.com/ZetangForward/Bilingual_L-CiteEval-Ultra.git
 cd Bilingual_L-CiteEval-Ultra/src
 conda create -n citeeval python=3.10 -y
 conda activate citeeval
