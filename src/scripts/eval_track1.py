@@ -60,7 +60,7 @@ def print_dict_in_table_format(data, excel_file_path):
     all_scores = []
     rows = []
     task_name_zh = ["1_hop", "2_hop", "3_hop", "yes_no", "counting_stars"]
-    task_name_en = ["multihop_qa", "single_qa", "counterfact","niah", "counting_stars"]
+    task_name_en = ["multihop_qa", "single_qa", "counterfact" ,"counting_stars","niah"]
 
     for benchmark_name, tasks in data.items():
         benchmark_scores = []
