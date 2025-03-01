@@ -98,10 +98,10 @@ python scripts/run.py  # or export HF_ENDPOINT=https://hf-mirror.com && python s
 
 ```bash
 python scripts/run.py \
---model_path=meta-llama/Llama-3.1-8B-Instruct \
---save_tag=Llama-3.1-8B-Instruct \
---devices=[0,1] \
---tp_size=2
+model_path=meta-llama/Llama-3.1-8B-Instruct \
+save_tag=Llama-3.1-8B-Instruct \
+devices=[0,1] \
+tp_size=2
 ```
 
 在得到推理结果后，请根据您选择的任务运行相应的评测脚本：
