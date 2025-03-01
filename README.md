@@ -29,7 +29,7 @@ Finally, we add **counting_stars** subset directly from the open source  library
 <table style="font-size: 16px;" >
   <tr>
     <th>ZH - Task</th><th> Task Name </th><th> Samples</th><th>Length</th> <th> Facts Source </th> <th> Irrlevent Context Source</th></tr>
-  <tr><th>qa1</th><th>1_hop</th><th>120</th><th rowspan=5> 8k - 128k </th><th rowspan=4>NLPCC-MH</th><th rowspan=4><a href = https://huggingface.co/datasets/Linly-AI/Chinese-pretraining-dataset>Chinese-Pretraining</a> </th></tr>
+  <tr><th>qa1</th><th>1_hop</th><th>120</th><th rowspan=5> 8k - 128k </th><th rowspan=4><a href = https://github.com/wavewangyue/NLPCC-MH>NLPCC-MH<a></th><th rowspan=4><a href = https://huggingface.co/datasets/Linly-AI/Chinese-pretraining-dataset>Chinese-Pretraining</a> </th></tr>
 <tr><th>qa2</th><th>2_hop</th><th>120</th></tr>
 <tr><th>qa3</th><th>3_hop</th><th>120</th></tr>
 <tr><th>qa4</th><th>yes_no</th><th>120</th></tr>
