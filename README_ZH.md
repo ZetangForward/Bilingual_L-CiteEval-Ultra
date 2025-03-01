@@ -37,7 +37,7 @@ L-CiteEval 是一个长文本评测基准，旨在评估NLP模型在长上下文
 
 ### 英文
 
-对于英文数据集，我们也提供了五个子任务。首先，我们基于 [HotpotQA](https://arxiv.org/pdf/1809.09600) 和 [2WikiMultihopQA](https://arxiv.org/pdf/2011.01060) 构建了 **multihop_qa** 子任务，并基于 [NarrativeQA](https://arxiv.org/pdf/1712.07040) 和 [Natural Questions](https://aclanthology.org/Q19-1026.pdf) 构建了 **single_qa** 子任务。对于这两个任务，我们还增加了带有难度级别的额外样本供用户选择。然后，对于模型可能不会根据提供的上下文回答问题的情况，我们设计了一些 **counterfact** 样本，以测试模型对提供上下文的忠实度。
+对于英文数据集，我们也提供了五个子任务。首先，我们基于 [HotpotQA](https://arxiv.org/pdf/1809.09600) 和 [2WikiMultihopQA](https://arxiv.org/pdf/2011.01060) 构建了 **multihop_qa** 子任务，并基于 [NarrativeQA](https://arxiv.org/pdf/1712.07040) 和 [Natural Questions](https://aclanthology.org/Q19-1026.pdf) 构建了 **single_qa** 子任务。然后，对于模型可能不会根据提供的上下文回答问题的情况，我们设计了一些 **counterfact** 样本，以测试模型对提供上下文的忠实度。
 
 最后，我们直接从开源库 [Counting-Stars](https://github.com/nick7nlp/Counting-Stars) 中添加了 **counting_stars** 子集，并从开源项目 [NIAH](https://github.com/gkamradt/LLMTest_NeedleInAHaystack/tree/main) 中添加了 **niah** 子任务。
 
@@ -104,8 +104,6 @@ python scripts/run.py \
 --tp_size=2
 ```
 
-
-
 在得到推理结果后，请根据您选择的任务运行相应的评测脚本：
 
 ```bash
@@ -116,14 +114,7 @@ python scripts/eval_track1.py --folder_name <save_tag> # default: python scripts
 python scripts/eval_track2.py --folder_name <save_tag> # default: python scripts/eval_track2.py --folder_name Llama-3.1-8B-Instruct
 ```
 
-
-
-
-
 这里我们展示了几个常见模型的结果：
-
-
-
 
 <table style="font-size: 16px; margin: auto;margin: auto; width: 85%;">
   <tr>
@@ -142,26 +133,6 @@ python scripts/eval_track2.py --folder_name <save_tag> # default: python scripts
 <tr><th>niah</th><th>30.83</th><th>18.06</th><th>12.56</th><th>40.69</th></tr>
 <tr><th>avg.</th><th>27.91</th><th>14.34</th><th>15.35</th><th>28.81</th></tr>
 <tr><th colspan = 2> AVG.</th><th>15.11</th><th>8.23</th><th>8.05</th><th>16.60</th></tr>
-
-
-<table style="font-size: 16px; margin: auto;margin: auto; width: 85%;">
-  <tr>
-    <th>Track 2</th>  <th>LGF (%)</th><th>Llama3.1<br>-8B-Instruct</th> <th>Qwen2.5<br>-7B-Instruct</th>
-  <th>Mistral-7B<br>-Instruct-v0.3</th><th> glm-4<br>-9b-chat</th></tr>
-<tr><th rowspan = 6> ZH </th> <th>1_hop</th> <th>27.61</th><th>36.46</th><th>16.97</th><th>3.72</th></tr>
-<tr><th>2_hop</th><th>10.31</th><th>24.58</th><th>7.66</th><th>2.49</th></tr>
-<tr><th>3_hop</th><th>3.87</th><th>10.36</th><th>2.21</th><th>1.05</th></tr>
-<tr><th>yes_no</th><th>44.17</th><th>72.50</th><th>32.53</th><th>69.17</th></tr>
-<tr><th>counting_stars</th><th>28.18</th><th>44.55</th><th>6.96</th><th>57.59</th></tr>
-<tr><th>avg.</th><th>22.83</th><th>37.69</th><th>13.27</th><th>26.80</th></tr>
-<tr><th rowspan = 6>EN</th><th>multihop_qa</th><th>14.53</th><th>12.75</th><th>84.59</th><th>4.27</th></tr>
-<tr><th>single_qa</th><th>22.21</th><th>18.46</th><th>28.31</th><th>5.49</th></tr>
-<tr><th>counterfact</th><th>12.94</th><th>11.49</th><th>14.17</th><th>1.01</th></tr>
-<tr><th>counting_stars</th><th>36.25</th><th>57.40</th><th>24.06</th><th>77.92</th></tr>
-<tr><th>niah</th><th>93.5</th><th>97.79</th><th>8.76</th><th>96.33</th></tr>
-<tr><th>avg.</th><th>35.89</th><th>39.58</th><th>31.98</th><th>37.00</th></tr>
-<tr><th colspan = 2> AVG.</th><th>29.36</th><th>38.63</th><th>22.62</th><th>31.90</th></tr></table>
-
 
 ## 训练数据推荐
 

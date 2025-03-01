@@ -37,7 +37,7 @@ Finally, we add **counting_stars** subset directly from the open source  library
 
 ### English
 
-For English dataset, we also offer five subtasks. First, we build the **multihop_qa** subtask based on [HotpotQA](https://arxiv.org/pdf/1809.09600)  and [2WikiMultihopQA](https://arxiv.org/pdf/2011.01060) , and build the **single_qa** subtask based on [NarrativeQA](https://arxiv.org/pdf/1712.07040) and [Natural Questions](https://aclanthology.org/Q19-1026.pdf). And for these two tasks, we add additional samples with difficulty levels for users' choices. Then, based on the likeihood that the models may not answer the question according to the provided context, we designed a number of **counterfact** samples, to test the faithfulness of the models to the provided context.
+For English dataset, we also offer five subtasks. First, we build the **multihop_qa** subtask based on [HotpotQA](https://arxiv.org/pdf/1809.09600)  and [2WikiMultihopQA](https://arxiv.org/pdf/2011.01060) , and build the **single_qa** subtask based on [NarrativeQA](https://arxiv.org/pdf/1712.07040) and [Natural Questions](https://aclanthology.org/Q19-1026.pdf). Then, based on the likeihood that the models may not answer the question according to the provided context, we designed a number of **counterfact** samples, to test the faithfulness of the models to the provided context.
 
 Finally, we add **counting_stars** subset directly from the open source  library [Counting-Stars](https://github.com/nick7nlp/Counting-Stars) , and add **niah** subset from the open source library [NIAH](https://github.com/gkamradt/LLMTest_NeedleInAHaystack/tree/main) .
 
@@ -104,10 +104,7 @@ devices=[0,1] \
 tp_size=2
 ```
 
-
-
 After reasoning, you may do evaluating according to your track by run:
-
 
 ```bash
 # track 1:
@@ -116,7 +113,6 @@ python scripts/eval_track1.py --folder_name <save_tag> # default: python scripts
 # track 2:
 python scripts/eval_track2.py --folder_name <save_tag> # default: python scripts/eval_track2.py --folder_name Llama-3.1-8B-Instruct
 ```
-
 
 We present the results of several common models:
 
@@ -137,25 +133,6 @@ We present the results of several common models:
 <tr><th>niah</th><th>30.83</th><th>18.06</th><th>12.56</th><th>40.69</th></tr>
 <tr><th>avg.</th><th>27.91</th><th>14.34</th><th>15.35</th><th>28.81</th></tr>
 <tr><th colspan = 2> AVG.</th><th>15.11</th><th>8.23</th><th>8.05</th><th>16.60</th></tr>
-
-
-<table style="font-size: 16px; margin: auto;margin: auto; width: 85%;">
-  <tr>
-    <th>Track 2</th>  <th>LGF (%)</th><th>Llama3.1<br>-8B-Instruct</th> <th>Qwen2.5<br>-7B-Instruct</th>
-  <th>Mistral-7B<br>-Instruct-v0.3</th><th> glm-4<br>-9b-chat</th></tr>
-<tr><th rowspan = 6> ZH </th> <th>1_hop</th> <th>27.61</th><th>36.46</th><th>16.97</th><th>3.72</th></tr>
-<tr><th>2_hop</th><th>10.31</th><th>24.58</th><th>7.66</th><th>2.49</th></tr>
-<tr><th>3_hop</th><th>3.87</th><th>10.36</th><th>2.21</th><th>1.05</th></tr>
-<tr><th>yes_no</th><th>44.17</th><th>72.50</th><th>32.53</th><th>69.17</th></tr>
-<tr><th>counting_stars</th><th>28.18</th><th>44.55</th><th>6.96</th><th>57.59</th></tr>
-<tr><th>avg.</th><th>22.83</th><th>37.69</th><th>13.27</th><th>26.80</th></tr>
-<tr><th rowspan = 6>EN</th><th>multihop_qa</th><th>14.53</th><th>12.75</th><th>84.59</th><th>4.27</th></tr>
-<tr><th>single_qa</th><th>22.21</th><th>18.46</th><th>28.31</th><th>5.49</th></tr>
-<tr><th>counterfact</th><th>12.94</th><th>11.49</th><th>14.17</th><th>1.01</th></tr>
-<tr><th>counting_stars</th><th>36.25</th><th>57.40</th><th>24.06</th><th>77.92</th></tr>
-<tr><th>niah</th><th>93.5</th><th>97.79</th><th>8.76</th><th>96.33</th></tr>
-<tr><th>avg.</th><th>35.89</th><th>39.58</th><th>31.98</th><th>37.00</th></tr>
-<tr><th colspan = 2> AVG.</th><th>29.36</th><th>38.63</th><th>22.62</th><th>31.90</th></tr></table>
 
 ## Training Data Recommendation
 
