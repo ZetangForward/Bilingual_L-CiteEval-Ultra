@@ -284,7 +284,7 @@ def eval():
 
         output_path = f"./generation/{benchmark_name}/track2_results/{folder_name}"
         os.makedirs(output_path,exist_ok=True)
-        print_dict_in_table_format(benchmark_dict,f"./generation/{benchmark_name}/results/{folder_name}/output_table.xlsx")
+        print_dict_in_table_format(benchmark_dict,f"./generation/{benchmark_name}/track2_results/{folder_name}/output_table.xlsx")
         logger.info("results_table is saved in {}".format(output_path+"/output_table.xlsx"))
         
 
