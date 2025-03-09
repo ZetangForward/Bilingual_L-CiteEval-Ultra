@@ -168,7 +168,7 @@ Training data is unlimited. The following datasets are recommended:
 
 ## Submission
 
-For submission, the following materials should be packaged as one `zip` file and sent to [zecheng.tang@foxmail.com](zecheng.tang@foxmail.com):
+For submission, the following materials should be packaged as one `zip` file and sent to [zctang@stu.suda.edu.cn)](zctang@stu.suda.edu.cn)):
 
 ***Submission File** :  After running our evaluation framework, the output will be saved in **./src/generation** , please pack this folder into .zip format and submit this folder. If you use your own evaluation framework, make sure your submission should include the original output of the model and the corresponding evaluation results for all tasks(Track1 or Track2 or both).
 
