@@ -169,7 +169,7 @@ python scripts/eval_track2.py --folder_name <save_tag> # default: python scripts
 
 ## 提交
 
-对于提交，以下材料应打包为一个 `zip` 文件，并发送到[zctang@stu.suda.edu.cn)](zctang@stu.suda.edu.cn))：
+对于提交，以下材料应打包为一个 `zip` 文件，并发送到[zctang@stu.suda.edu.cn](zctang@stu.suda.edu.cn)：
 
 ***提交文件** : 运行我们的评估框架后，输出结果将保存在 **./src/generation** 目录中，请将此文件夹打包为 .zip 格式并提交。如果您使用自定义的评估框架，请确保提交内容包括模型的原始输出以及相应的所有任务的评估结果( Track1 或 Track2 或均包含)。
 
