@@ -76,7 +76,7 @@ en_dataset = load_dataset('ZetangForward/Bilingual_CiteEval', revision="en")
 请从 [flash-attn](https://github.com/Dao-AILab/flash-attention/releases) 下载适当版本的 flash-attn，然后运行：
 
 ```bash
-git clone https://gitlab.com/iiGray/bilingual_citeeval_benchmark.git #把这个换成现在这个仓库
+git clone https://github.com/ZetangForward/Bilingual_L-CiteEval-Ultra.git
 cd Bilingual_L-CiteEval-Ultra/src
 conda create -n citeeval python=3.10 -y
 conda activate citeeval
@@ -116,8 +116,6 @@ python scripts/eval_track2.py --folder_name <save_tag> # default: python scripts
 
 这里我们展示了几个常见模型的结果：
 
-
-
 <table style="font-size: 16px; margin: auto;margin: auto; width: 85%;">
   <tr>
     <th>Track 1</th>  <th>LRF (%)</th><th>Llama3.1<br>-8B-Instruct</th> <th>Qwen2.5<br>-7B-Instruct</th>
@@ -154,9 +152,6 @@ python scripts/eval_track2.py --folder_name <save_tag> # default: python scripts
 <tr><th>niah</th><th>93.5</th><th>97.79</th><th>8.76</th><th>96.33</th></tr>
 <tr><th>avg.</th><th>35.89</th><th>39.58</th><th>31.98</th><th>37.00</th></tr>
 <tr><th colspan = 2> AVG.</th><th>29.36</th><th>38.63</th><th>22.62</th><th>31.90</th></tr></table>
-
-
-
 
 ## 训练数据推荐
 
